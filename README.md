@@ -70,7 +70,6 @@ function TodoList(todos: Todo[]) {
 ```
 ## Operations
 
-### HTTP Methods
 | Operation   | Arguments | Desc |
 |---|---|---|
 | Server Side
