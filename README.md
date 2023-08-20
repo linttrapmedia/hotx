@@ -46,7 +46,7 @@ function TodoList(todos: Todo[]) {
 
 
 ### Which gets parsed on the client and works like this: 
-```json
+```js
 // on click, this entire config is sent to the backend
 ["on", "click"],
 // the DELETE request is handled on the backend!
@@ -57,7 +57,7 @@ function TodoList(todos: Todo[]) {
 ["REMOVE", "#todo-1"]
 ```
 ### Now you can do crazy stuff like this:
-```json
+```js
 ["on", "click"], // trigger on click
 ["POST", "/api/todo-list/create", "groceries"], // add new item, return data
 ["GET", "/component/todo-item"], // pipe returned data to todo item html renderer
