@@ -4,7 +4,7 @@ HOTX (Pronounced "Hot Cross") is a Bun-first, htmx inspired library for writing 
 ## Why?
 The central value of htmx is that you get to define your application behavior in one spot (the backend), however with Bun.js we can be much more expressive and use full-typed syntax to create either a full-stack or backend-for-frontend app to keep front-end teams moving fast.
 
-## How It Works
+## What It Looks Like:
 
 ### Backend code that looks like this:
 ```typescript
@@ -15,7 +15,7 @@ function TodoList(todos: Todo[]) {
       li(["attr", "id", "todo-" + t.id])(
         span(t.text),
         button(
-          ["x", "on", "click"],
+          ["x", "ON", "click"],
           ["x", "DELETE", "/api/todo-list/delete", t.id],
           ["x", "RETURN"],
           ["x", "REMOVE", "#todo-" + t.id]
@@ -33,7 +33,7 @@ function TodoList(todos: Todo[]) {
     <span>Item 1</span>
     <button
       x-config='[
-            ["on", "click"],
+            ["ON", "click"],
             ["DELETE", "/api/todo-list/delete", 1],
             ["RETURN"],
             ["REMOVE", "#todo-1"]
@@ -47,9 +47,11 @@ function TodoList(todos: Todo[]) {
 
 ### Which gets parsed on the client and works like this: 
 ```js
-// on click, this entire config is sent to the backend
-["on", "click"],
-// the DELETE request is handled on the backend!
+// on click, begin processing
+["ON", "click"],
+// a server-side event is detected (DELETE)
+// the entire config is sent to a backend for further processing
+// where a DELETE request is contructured and executed
 ["DELETE", "/api/todo-list/delete",1],
 // a RETURN signals the backend to return processing to the frontend
 ["RETURN"],
@@ -58,7 +60,8 @@ function TodoList(todos: Todo[]) {
 ```
 ### Now you can do crazy stuff like this:
 ```js
-["on", "click"], // trigger on click
+["ON", "click"], // trigger on click
+["SELECT", "#todo-form", "FormData"], // get form data
 ["POST", "/api/todo-list/create", "groceries"], // add new item, return data
 ["GET", "/component/todo-item"], // pipe returned data to todo item html renderer
 ["RETURN"], // return the todo item html
@@ -71,17 +74,19 @@ function TodoList(todos: Todo[]) {
 | Operation   | Arguments | Desc |
 |---|---|---|
 | Server Side
+| `DELETE`    | `/api/endpoint` | http req |
 | `GET`       | `/api/endpoint` | http req |
+| `PATCH`     | `/api/endpoint` | http req |
 | `POST`      | `/api/endpoint` | http req |
 | `PUT`       | `/api/endpoint` | http req |
-| `PATCH`     | `/api/endpoint` | http req |
-| `DELETE`    | `/api/endpoint` | http req |
+| `TRANSFORM` | transformer | transform data from one format to another  |
 | Client Side
-| `ON`        | Event Name   | add listener |
+| `APPEND`    | CSS Selector   |  append html |
 | `ATTR`      | key, value   | add attribute |
 | `EVENT`     | name, func, args | call function |
-| `APPEND`    | CSS Selector   |  append html |
+| `INNERHTML` | CSS Selector   | replace html |
+| `ON`        | Event Name   | add listener |
+| `OUTERHTML` | CSS Selector   | replace html |
 | `PREPEND`   | CSS Selector   | prepend html |
 | `REMOVE`    | CSS Selector   | remove html |
-| `INNERHTML` | CSS Selector   | replace html |
-| `OUTERHTML` | CSS Selector   | replace html |
+| `SELECT` | CSS Selector, object   | select dom |
