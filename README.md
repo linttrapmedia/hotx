@@ -90,3 +90,5 @@ function TodoList(todos: Todo[]) {
 | `PREPEND`   | CSS Selector   | prepend html |
 | `REMOVE`    | CSS Selector   | remove html |
 | `SELECT` | CSS Selector, object   | select dom |
+| `TRANSFORM` | transformer | transform data from one format to another  |
+
