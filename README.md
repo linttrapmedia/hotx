@@ -29,7 +29,7 @@ function TodoList(todos: Todo[]) {
 ### Renders html that looks like this:
 ```html
 <ul>
-  <li>
+  <li id="todo-1">
     <span>Item 1</span>
     <button
       x-config='[
