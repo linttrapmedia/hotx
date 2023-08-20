@@ -47,15 +47,14 @@ function TodoList(todos: Todo[]) {
 
 ### Which gets parsed on the client and works like this: 
 ```json
-    // on click, this entire config is sent to the backend
-    ["on", "click"],
-    // the DELETE request is handled on the backend!
-    ["DELETE", "/api/todo-list/delete",1],
-    // a RETURN signals the backend to return processing to the frontend
-    ["RETURN"],
-    // the frontend then removes the item from the dom
-    ["REMOVE", "#todo-1"]
-]
+// on click, this entire config is sent to the backend
+["on", "click"],
+// the DELETE request is handled on the backend!
+["DELETE", "/api/todo-list/delete",1],
+// a RETURN signals the backend to return processing to the frontend
+["RETURN"],
+// the frontend then removes the item from the dom
+["REMOVE", "#todo-1"]
 ```
 ### Now you can do crazy stuff like this:
 ```json
