@@ -85,6 +85,7 @@ function TodoList(todos: Todo[]) {
 | `EVENT`     | name, func, args | call function |
 | `INNERHTML` | CSS Selector   | replace html |
 | `ON`        | Event Name   | add listener |
+| `ONERROR`   | error handler  | step jumped to on error |
 | `OUTERHTML` | CSS Selector   | replace html |
 | `PREPEND`   | CSS Selector   | prepend html |
 | `REMOVE`    | CSS Selector   | remove html |
