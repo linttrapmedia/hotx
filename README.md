@@ -2,7 +2,7 @@
 HOTX (Pronounced "Hot Cross") is a Bun-first, htmx inspired library for writing front-end applications using backend code.
 
 ## Why?
-The central value of htmx is that you get to define your application behavior in one spot (the backend), however with Bun.js because we get a much more expressive and full-typed syntax to create either a full-stack or backend-for-frontend app to keep front-end teams moving fast.
+The central value of htmx is that you get to define your application behavior in one spot (the backend), however with Bun.js we can be much more expressive and use full-typed syntax to create either a full-stack or backend-for-frontend app to keep front-end teams moving fast.
 
 ## How It Works
 
