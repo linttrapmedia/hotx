@@ -2,7 +2,7 @@
 HOTX (Pronounced "Hot Cross") is a Bun-first, htmx inspired, "backend-for-frontend" project starter kit for writing full stack apps in Bun.js. Hot Cross Bun!
 
 ## Why Not Just Use `A` or `B`?
-With Bun.js we have everything we need to build a full stack app providing us with a much more expressive and clean back-to-front syntax.
+With Bun.js we have everything we need to build a full stack app providing us with a much more expressive option for defining a clean back-to-front syntax.
 
 - Stop shipping all your domain logic to the client and coupling your frontend app to every wind of change. Make your life easier and use a "Backend For Frontend" app to handle all the important stuff.
 - Frameworks leave you in the dust and can't care about the particulars of your business or situation. A good quality starter kit will be better in the short and long term.
