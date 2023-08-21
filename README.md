@@ -98,7 +98,7 @@ function TodoList(todos: Todo[]) {
 ["SELECT", '#todo-indicator'],
 ["ATTR", "className", "indicator loading"],
 ["SELECT", "#todo-form", "FormData"], 
-["REQUEST", "/handle/todo-list/create", "groceries"], 
+["REQUEST", "/handle/todo-list/create"], 
 ["APPEND", "#todo-list"],
 ["SELECT", '#todo-indicator'],
 ["ATTR", "className", "indicator"],
