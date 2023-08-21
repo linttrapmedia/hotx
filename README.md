@@ -6,20 +6,53 @@ The central value of htmx is that you get to define your application behavior in
 
 ## What It Looks Like:
 
-### Backend code that looks like this:
+### The html templating engine looks like this:
 ```typescript
-import h from "@hotx"
+ul(
+  li("one"),
+  li("two"),
+  li("three"),
+)
+```
+
+which outputs this
+```html
+<ul>
+    <li>one</li>
+    <li>one</li>
+    <li>one</li>
+</ul>
+```
+
+add some attributes
+```typescript
+ul(['ATTR', 'id', 'list'])(
+  li("one"),
+  li("two"),
+  li("three"),
+)
+```
+and output this
+```html
+<ul id="list">
+    <li>one</li>
+    <li>one</li>
+    <li>one</li>
+</ul>
+```
+
+### Now turn it into a function and loop over data
+```typescript
 function TodoList(todos: Todo[]) {
-  return ul(["attr", "id", "todo-list"])(
+  return ul(["ATTR", "id", "todo-list"])(
     todos.map((t) =>
-      li(["attr", "id", "todo-" + t.id])(
+      li(["ATTR", "id", "todo-" + t.id])(
         span(t.text),
         button(
-          ["x", "ON", "click"],
-          ["x", "DELETE", "/api/todo-list/delete", t.id],
-          ["x", "RETURN"],
-          ["x", "REMOVE", "#todo-" + t.id]
-        )
+          ["TRIGGER", "click"],
+          ["REQUEST", "/handle/todo-list/delete", t.id],
+          ["REMOVE", "#todo-" + t.id],
+        )("delete")
       )
     )
   );
@@ -28,14 +61,13 @@ function TodoList(todos: Todo[]) {
 
 ### Renders html that looks like this:
 ```html
-<ul>
+<ul id="todo-list">
   <li id="todo-1">
     <span>Item 1</span>
     <button
       x-config='[
-            ["ON", "click"],
-            ["DELETE", "/api/todo-list/delete", 1],
-            ["RETURN"],
+            ["TRIGGER", "click"],
+            ["REQUEST", "/handle/todo-list/delete", 1],
             ["REMOVE", "#todo-1"]
         ]'>
       delete
@@ -45,50 +77,62 @@ function TodoList(todos: Todo[]) {
 ```
 
 
-### Which gets parsed on the client and works like this: 
+### The `x-config` is a special attribute which gets parsed on the client, attaching behavior which results in this: 
 ```js
 // on click, begin processing
-["ON", "click"],
-// a server-side event is detected (DELETE)
-// the entire config is sent to a backend for further processing
-// where a DELETE request is contructured and executed
-["DELETE", "/api/todo-list/delete",1],
-// a RETURN signals the backend to return processing to the frontend
-["RETURN"],
-// the frontend then removes the item from the dom
+["TRIGGER", "click"],
+// config and data is sent to a backend
+// where a DELETE request is executed
+["REQUEST", "/api/todo-list/delete",1],
+// The result is sent back to the frontend
+// which then then removes the item from the dom
 ["REMOVE", "#todo-1"]
 ```
-### Now you can do crazy stuff like this:
+### You can do more complex operations like this:
 ```js
-["ON", "click"], // trigger on click
-["SELECT", "#todo-form", "FormData"], // get form data
-["POST", "/api/todo-list/create", "groceries"], // add new item, return data
-["GET", "/component/todo-item"], // pipe returned data to todo item html renderer
-["RETURN"], // return the todo item html
-["APPEND", "#todo-list"], // append it to the todo list
-["TRIGGER", "click", "#todo-counter"] // click the todo counter
+["TRIGGER", "click"], 
+["SELECT", '#todo-indicator'],
+["ATTR", "className", "indicator loading"],
+["SELECT", "#todo-form", "FormData"], 
+["REQUEST", "/handle/todo-list/create", "groceries"], 
+["APPEND", "#todo-list"],
+["SELECT", '#todo-indicator'],
+["ATTR", "className", "indicator"],
+```
+
+## Or even run multiple operations in parallel, like submit mutliple forms!
+```js
+[
+  ["TRIGGER", "click"],
+  [
+    "PARALLEL",
+    [
+      ["REQUEST", "/handle/todo-list/delete", 1],
+      ["REMOVE", "#todo-1"],
+    ],
+    [
+      ["SELECT", "#reminder-form", "formData"],
+      ["REQUEST", "/handle/reminder/create"],
+      ["REPLACE", "#reminders"],
+    ],
+  ],
+];
 ```
 ## Operations
 
-| Operation   | Arguments | Desc |
-|---|---|---|
-| Server Side
-| `DELETE`    | `/api/endpoint` | http req |
-| `GET`       | `/api/endpoint` | http req |
-| `PATCH`     | `/api/endpoint` | http req |
-| `POST`      | `/api/endpoint` | http req |
-| `PUT`       | `/api/endpoint` | http req |
-| `TRANSFORM` | transformer | transform data from one format to another  |
-| Client Side
-| `APPEND`    | CSS Selector   |  append html |
-| `ATTR`      | key, value   | add attribute |
-| `EVENT`     | name, func, args | call function |
-| `INNERHTML` | CSS Selector   | replace html |
-| `ON`        | Event Name   | add listener |
-| `ONERROR`   | error handler  | step jumped to on error |
-| `OUTERHTML` | CSS Selector   | replace html |
-| `PREPEND`   | CSS Selector   | prepend html |
-| `REMOVE`    | CSS Selector   | remove html |
-| `SELECT` | CSS Selector, object   | select dom |
-| `TRANSFORM` | transformer | transform data from one format to another  |
-
+| Operation | Desc |
+|---|---|
+| Server
+| `REQUEST`   | posts data to handler on the server |
+| `RESULT`    | result from server |
+| Client
+| `APPEND`    | append html |
+| `ATTR`      | add html attribute |
+| `EVENT`     | trigger client side event |
+| `ONERROR`   | onerror sequence |
+| `PREPEND`   | prepend html |
+| `REMOVE`    | remove html |
+| `REPLACE`   | replace html |
+| `PARALLEL`  | run multiple operations in parallel |
+| `SELECT`    | select a dom element, (including html returned by server) |
+| `TRIGGER`   | trigger operation |
