@@ -140,3 +140,4 @@ function TodoList(todos: Todo[]) {
 | `PARALLEL`  | run multiple operations in parallel |
 | `SELECT`    | select a dom element, (including html returned by server) |
 | `TRIGGER`   | trigger operation |
+| `WATCH` | watch for dom element or event |
