@@ -1,10 +1,14 @@
 # HOTX - A Proposal
-HOTX (Pronounced "Hot Cross") is a Bun-first, htmx inspired library for writing front-end applications using backend code.
+HOTX (Pronounced "Hot Cross") is a Bun-first, htmx inspired, "backend-for-frontend" project starter kit for writing full stack apps in Bun.js. Hot Cross Bun!
 
-## Why?
-The central value of htmx is that you get to define your application behavior in one spot (the backend), however with Bun.js we can be much more expressive and use full-typed syntax to create either a full-stack or backend-for-frontend app to keep front-end teams moving fast.
+## Why Not Just Use `A` or `B`?
+With Bun.js we have everything we need to build a full stack app providing us with a much more expressive and clean back-to-front syntax.
 
-## What It Looks Like:
+- Stop shipping all your domain logic to the client and coupling your frontend app to every wind of change. Make your life easier and use a "Backend For Frontend" app to handle all the important stuff.
+- Frameworks leave you in the dust and can't care about the particulars of your business or situation. A good quality starter kit will be better in the short and long term.
+- You can't avoid having to write client side code. `htmx` can't solve that in any real tenable way and it's suggestions for doing so (using `alpine` and/or `hyperscript`) I would not advise.
+
+## What Does `HOTX` Look Like?:
 
 ### The html templating engine looks like this:
 ```typescript
@@ -32,7 +36,7 @@ ul(['ATTR', 'id', 'list'])(
   li("three"),
 )
 ```
-and output this
+and it outpus this
 ```html
 <ul id="list">
     <li>one</li>
@@ -59,7 +63,7 @@ function TodoList(todos: Todo[]) {
 }
 ```
 
-### Renders html that looks like this:
+### Which renders html that looks like this:
 ```html
 <ul id="todo-list">
   <li id="todo-1">
