@@ -1,56 +1,78 @@
 # HOTX - A Proposal
-HOTX (Pronounced "Hot Cross") is a Bun-first, htmx inspired, "backend-for-frontend" project starter kit for writing full stack apps in Bun.js. Hot Cross Bun!
+HOTX (Pronounced "Hot Cross") is a Bun-first "backend-for-frontend" project starter kit for writing full stack apps in Bun.js. Hot Cross Bun!
 
-## Why Not Just Use `A` or `B`?
-With Bun.js we have everything we need to build a full stack app providing us with a much more expressive option for defining a clean back-to-front syntax.
+## Why
+Because Bun.js is a one-stop shop that's why.
 
-- Stop shipping all your domain logic to the client and coupling your frontend app to every wind of change. Make your life easier and use a "Backend For Frontend" app to handle all the important stuff.
-- Frameworks leave you in the dust and can't care about the particulars of your business or situation. A good quality starter kit will be better in the short and long term.
-- You can't avoid having to write client side code. `htmx` can't solve that in any real tenable way and its suggestions for doing so (using `alpine` and/or `hyperscript`) I would not advise.
-
+- ✔ Uses `jsx` syntax 
+- ✔ No dependencies
+- ✔ Takes a Backend-for-frontend approach which is better all around
+- ✔ Declares client-side behavior from the backend (kind of like `htmx`)
+- ✔ Serve and transpile client-side code on demand when you need it
+- ✔ Exists as a starter kit to get you going instead of a framework that leaves you in the dust
 ## What Does `HOTX` Look Like?:
 
 ### It's just jsx!:
-```html
-<div hot-trigger="click" hot-request="/get-list" hot-replace="#list">
-  <ul id="list"></ul>
-</div>
+```tsx
+// handle/todo/create.ts
+function handleTodoCreate(req: HotxRequest) {
+  const todo = req.data.todo;
+  return <TodoItem>{todo}</TodoItem>;
+}
+
+// component/todo-item.tsx
+const TodoItem = (item: any) => {
+  return <li>{item}</li>;
+};
+
+// component/todo-list.tsx
+function TodoList({ list }: { list: string[] }) {
+  return (
+    <div>
+      <ul id="todo-list">{list.map(TodoItem)}</ul>
+      <form id="todo-form">
+        <input name="todo" type="text" />
+        <button
+          hot-x={[
+            ["trigger", "click"],
+            ["select", "#todo-form", "formData"],
+            ["request", "/handle/todo/create"],
+            ["append", "#todo-list"],
+            ["clear", "#todo-form input"],
+          ]}
+        >
+          Add
+        </button>
+      </form>
+    </div>
+  );
+}
 ```
 
-### The `hot-x` attributes are combined into a single attribute like this:
-```html
-<div hot-x='[["trigger","click"],["request","/get-list"],["replace","#list"]]'>
-  <ul id="list"></ul>
-</div>
-```
 
-
-### From there the `hot-x` attribute is used by the client to attach behavior that will:
+### The `hot-x` config is used by the client to attach behavior that will:
 ```js
-// on click, begin processing
-["trigger", "click"],
-// request html from /get-list
-["request", "/get-list"],
-// replace #list with the html result
-["replace", "#list"]
+["trigger", "click"], // on click
+["select", "#todo-form", "formData"], // select the form data
+["request", "/handle/todo/create"], // submit it to the backend
+["append", "#todo-list"], // append result to the list
+["clear", "#todo-form input"], // clear the form
 ```
 
-## hot-x attributes
+## hot-x config
 
-| Operation | Desc |
+| Operation | Description |
 |---|---|
-| Server
-| `request`   | posts data to handler on the server |
-| `result`    | result from server |
-| Client
 | `append`    | append html |
 | `attr`      | add html attribute |
 | `event`     | trigger client side event |
 | `onerror`   | onerror sequence |
+| `parallel`  | run multiple operations in parallel |
 | `prepend`   | prepend html |
 | `remove`    | remove html |
 | `replace`   | replace html |
-| `parallel`  | run multiple operations in parallel |
+| `request`   | posts data to handler on the server |
+| `result`    | result from server |
 | `select`    | select a dom element, (including html returned by server) |
 | `trigger`   | trigger operation |
 | `watch` | watch for dom element events |

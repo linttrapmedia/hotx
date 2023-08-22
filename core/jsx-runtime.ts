@@ -17,7 +17,9 @@ export const jsx = (tag: any, props: any) => {
   const children = Array.isArray(props.children)
     ? props.children.join("")
     : props.children;
-  return `<${tag}${attrs}${hotAttrsString}>${children}</${tag}>`;
+  return `<${tag}${attrs}${hotAttrsString}>${
+    children ? children : ""
+  }</${tag}>`;
 };
 
 export const jsxDEV = jsx;
