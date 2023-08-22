@@ -72,7 +72,6 @@ function TodoList({ list }: { list: string[] }) {
 | `remove`    | remove html |
 | `replace`   | replace html |
 | `request`   | posts data to handler on the server |
-| `result`    | result from server |
 | `select`    | select a dom element, (including html returned by server) |
 | `trigger`   | trigger operation |
 | `watch` | watch for dom element events |
