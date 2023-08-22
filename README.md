@@ -1,16 +1,21 @@
-# HOTX - A Proposal
-HOTX (Pronounced "Hot Cross") is a Bun-first "backend-for-frontend" project starter kit for writing full stack apps in Bun.js. Hot Cross Bun!
+# hotx - A Proposal
+hotx (Pronounced "Hot Cross") is a Bun-first project starter kit for writing full stack apps in Bun.js. Hot Cross Bun!
+
+## Try it
+```bash
+bun run app/index.ts
+```
 
 ## Why
 Because Bun.js is a one-stop shop that's why.
 
-- ✔ Uses `jsx` syntax 
+- ✔ Uses `jsx` syntax to generate html
 - ✔ No dependencies
 - ✔ Takes a Backend-for-frontend approach which is better all around
 - ✔ Declares client-side behavior from the backend (kind of like `htmx`)
 - ✔ Serve and transpile client-side code on demand when you need it
 - ✔ Exists as a starter kit to get you going instead of a framework that leaves you in the dust
-## What Does `HOTX` Look Like?:
+## What Does `hotx` Look Like?:
 
 ### It's just jsx!:
 ```tsx
