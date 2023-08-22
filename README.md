@@ -10,134 +10,47 @@ With Bun.js we have everything we need to build a full stack app providing us wi
 
 ## What Does `HOTX` Look Like?:
 
-### The html templating engine looks like this:
-```typescript
-ul(
-  li("one"),
-  li("two"),
-  li("three"),
-)
-```
-
-which outputs this
+### It's just jsx!:
 ```html
-<ul>
-    <li>one</li>
-    <li>one</li>
-    <li>one</li>
-</ul>
+<div hot-trigger="click" hot-request="/get-list" hot-replace="#list">
+  <ul id="list"></ul>
+</div>
 ```
 
-add some attributes
-```typescript
-ul(['ATTR', 'id', 'list'])(
-  li("one"),
-  li("two"),
-  li("three"),
-)
-```
-and it outpus this
+### The `hot-x` attributes are combined into a single attribute like this:
 ```html
-<ul id="list">
-    <li>one</li>
-    <li>one</li>
-    <li>one</li>
-</ul>
-```
-
-### Now turn it into a function and loop over data
-```typescript
-function TodoList(todos: Todo[]) {
-  return ul(["ATTR", "id", "todo-list"])(
-    todos.map((t) =>
-      li(["ATTR", "id", "todo-" + t.id])(
-        span(t.text),
-        button(
-          ["TRIGGER", "click"],
-          ["REQUEST", "/handle/todo-list/delete", t.id],
-          ["REMOVE", "#todo-" + t.id],
-        )("delete")
-      )
-    )
-  );
-}
-```
-
-### Which renders html that looks like this:
-```html
-<ul id="todo-list">
-  <li id="todo-1">
-    <span>Item 1</span>
-    <button
-      x-config='[
-            ["TRIGGER", "click"],
-            ["REQUEST", "/handle/todo-list/delete", 1],
-            ["REMOVE", "#todo-1"]
-        ]'>
-      delete
-    </button>
-  </li>
-</ul>
+<div hot-x='[["trigger","click"],["request","/get-list"],["replace","#list"]]'>
+  <ul id="list"></ul>
+</div>
 ```
 
 
-### The `x-config` is a special attribute which gets parsed on the client, attaching behavior which results in this: 
+### From there the `hot-x` attribute is used by the client to attach behavior that will:
 ```js
 // on click, begin processing
-["TRIGGER", "click"],
-// config and data is sent to a backend
-// where a DELETE request is executed
-["REQUEST", "/api/todo-list/delete",1],
-// The result is sent back to the frontend
-// which then then removes the item from the dom
-["REMOVE", "#todo-1"]
-```
-### You can do more complex operations like this:
-```js
-["TRIGGER", "click"], 
-["SELECT", '#todo-indicator'],
-["ATTR", "className", "indicator loading"],
-["SELECT", "#todo-form", "FormData"], 
-["REQUEST", "/handle/todo-list/create"], 
-["APPEND", "#todo-list"],
-["SELECT", '#todo-indicator'],
-["ATTR", "className", "indicator"],
+["trigger", "click"],
+// request html from /get-list
+["request", "/get-list"],
+// replace #list with the html result
+["replace", "#list"]
 ```
 
-## Or even run multiple operations in parallel, like submit mutliple forms!
-```js
-[
-  ["TRIGGER", "click"],
-  [
-    "PARALLEL",
-    [
-      ["REQUEST", "/handle/todo-list/delete", 1],
-      ["REMOVE", "#todo-1"],
-    ],
-    [
-      ["SELECT", "#reminder-form", "formData"],
-      ["REQUEST", "/handle/reminder/create"],
-      ["REPLACE", "#reminders"],
-    ],
-  ],
-];
-```
-## Operations
+## hot-x attributes
 
 | Operation | Desc |
 |---|---|
 | Server
-| `REQUEST`   | posts data to handler on the server |
-| `RESULT`    | result from server |
+| `request`   | posts data to handler on the server |
+| `result`    | result from server |
 | Client
-| `APPEND`    | append html |
-| `ATTR`      | add html attribute |
-| `EVENT`     | trigger client side event |
-| `ONERROR`   | onerror sequence |
-| `PREPEND`   | prepend html |
-| `REMOVE`    | remove html |
-| `REPLACE`   | replace html |
-| `PARALLEL`  | run multiple operations in parallel |
-| `SELECT`    | select a dom element, (including html returned by server) |
-| `TRIGGER`   | trigger operation |
-| `WATCH` | watch for dom element or event |
+| `append`    | append html |
+| `attr`      | add html attribute |
+| `event`     | trigger client side event |
+| `onerror`   | onerror sequence |
+| `prepend`   | prepend html |
+| `remove`    | remove html |
+| `replace`   | replace html |
+| `parallel`  | run multiple operations in parallel |
+| `select`    | select a dom element, (including html returned by server) |
+| `trigger`   | trigger operation |
+| `watch` | watch for dom element events |
