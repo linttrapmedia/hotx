@@ -1,13 +1,14 @@
-type Attr = {
-  "hot-x"?: (
-    | ["trigger", string]
-    | ["request", string]
-    | ["append", string]
-    | ["prepend", string]
-    | ["replace", string]
-    | ["clear", string]
-    | ["select", string, string]
-  )[];
+type HotTrait =
+  | ["trigger", string]
+  | ["request", string]
+  | ["append", string]
+  | ["prepend", string]
+  | ["replace", string]
+  | ["clear", string]
+  | ["select", string, string];
+
+type HotAttr = {
+  "hot-x"?: HotTrait[];
   [key: string]: any;
 };
 
@@ -17,114 +18,114 @@ namespace JSX {
   type Element = string | any;
   interface IntrinsicElements {
     [key: string]: any;
-    a: Attr;
-    abbr: Attr;
-    address: Attr;
-    area: Attr;
-    article: Attr;
-    aside: Attr;
-    audio: Attr;
-    b: Attr;
-    base: Attr;
-    bdi: Attr;
-    bdo: Attr;
-    blockquote: Attr;
-    body: Attr;
-    br: Attr;
-    button: Attr;
-    canvas: Attr;
-    caption: Attr;
-    cite: Attr;
-    code: Attr;
-    col: Attr;
-    colgroup: Attr;
-    data: Attr;
-    datalist: Attr;
-    dd: Attr;
-    del: Attr;
-    details: Attr;
-    dfn: Attr;
-    dialog: Attr;
-    div: Attr;
-    dl: Attr;
-    dt: Attr;
-    em: Attr;
-    embed: Attr;
-    fieldset: Attr;
-    figcaption: Attr;
-    figure: Attr;
-    footer: Attr;
-    form: Attr;
-    h1: Attr;
-    h2: Attr;
-    h3: Attr;
-    h4: Attr;
-    h5: Attr;
-    h6: Attr;
-    head: Attr;
-    header: Attr;
-    hr: Attr;
-    html: Attr;
-    i: Attr;
-    iframe: Attr;
-    img: Attr;
-    input: Attr;
-    ins: Attr;
-    kbd: Attr;
-    label: Attr;
-    legend: Attr;
-    li: Attr;
-    link: Attr;
-    main: Attr;
-    map: Attr;
-    mark: Attr;
-    meta: Attr;
-    meter: Attr;
-    nav: Attr;
-    noscript: Attr;
-    object: Attr;
-    ol: Attr;
-    optgroup: Attr;
-    option: Attr;
-    output: Attr;
-    p: Attr;
-    param: Attr;
-    picture: Attr;
-    pre: Attr;
-    progress: Attr;
-    q: Attr;
-    rp: Attr;
-    rt: Attr;
-    ruby: Attr;
-    s: Attr;
-    samp: Attr;
-    script: Attr;
-    section: Attr;
-    select: Attr;
-    small: Attr;
-    source: Attr;
-    span: Attr;
-    strong: Attr;
-    style: Attr;
-    sub: Attr;
-    summary: Attr;
-    sup: Attr;
-    table: Attr;
-    tbody: Attr;
-    td: Attr;
-    template: Attr;
-    textarea: Attr;
-    tfoot: Attr;
-    th: Attr;
-    thead: Attr;
-    time: Attr;
-    title: Attr;
-    tr: Attr;
-    track: Attr;
-    u: Attr;
-    ul: Attr;
-    var: Attr;
-    video: Attr;
-    wbr: Attr;
+    a: HotAttr;
+    abbr: HotAttr;
+    address: HotAttr;
+    area: HotAttr;
+    article: HotAttr;
+    aside: HotAttr;
+    audio: HotAttr;
+    b: HotAttr;
+    base: HotAttr;
+    bdi: HotAttr;
+    bdo: HotAttr;
+    blockquote: HotAttr;
+    body: HotAttr;
+    br: HotAttr;
+    button: HotAttr;
+    canvas: HotAttr;
+    caption: HotAttr;
+    cite: HotAttr;
+    code: HotAttr;
+    col: HotAttr;
+    colgroup: HotAttr;
+    data: HotAttr;
+    datalist: HotAttr;
+    dd: HotAttr;
+    del: HotAttr;
+    details: HotAttr;
+    dfn: HotAttr;
+    dialog: HotAttr;
+    div: HotAttr;
+    dl: HotAttr;
+    dt: HotAttr;
+    em: HotAttr;
+    embed: HotAttr;
+    fieldset: HotAttr;
+    figcaption: HotAttr;
+    figure: HotAttr;
+    footer: HotAttr;
+    form: HotAttr;
+    h1: HotAttr;
+    h2: HotAttr;
+    h3: HotAttr;
+    h4: HotAttr;
+    h5: HotAttr;
+    h6: HotAttr;
+    head: HotAttr;
+    header: HotAttr;
+    hr: HotAttr;
+    html: HotAttr;
+    i: HotAttr;
+    iframe: HotAttr;
+    img: HotAttr;
+    input: HotAttr;
+    ins: HotAttr;
+    kbd: HotAttr;
+    label: HotAttr;
+    legend: HotAttr;
+    li: HotAttr;
+    link: HotAttr;
+    main: HotAttr;
+    map: HotAttr;
+    mark: HotAttr;
+    meta: HotAttr;
+    meter: HotAttr;
+    nav: HotAttr;
+    noscript: HotAttr;
+    object: HotAttr;
+    ol: HotAttr;
+    optgroup: HotAttr;
+    option: HotAttr;
+    output: HotAttr;
+    p: HotAttr;
+    param: HotAttr;
+    picture: HotAttr;
+    pre: HotAttr;
+    progress: HotAttr;
+    q: HotAttr;
+    rp: HotAttr;
+    rt: HotAttr;
+    ruby: HotAttr;
+    s: HotAttr;
+    samp: HotAttr;
+    script: HotAttr;
+    section: HotAttr;
+    select: HotAttr;
+    small: HotAttr;
+    source: HotAttr;
+    span: HotAttr;
+    strong: HotAttr;
+    style: HotAttr;
+    sub: HotAttr;
+    summary: HotAttr;
+    sup: HotAttr;
+    table: HotAttr;
+    tbody: HotAttr;
+    td: HotAttr;
+    template: HotAttr;
+    textarea: HotAttr;
+    tfoot: HotAttr;
+    th: HotAttr;
+    thead: HotAttr;
+    time: HotAttr;
+    title: HotAttr;
+    tr: HotAttr;
+    track: HotAttr;
+    u: HotAttr;
+    ul: HotAttr;
+    var: HotAttr;
+    video: HotAttr;
+    wbr: HotAttr;
   }
 }

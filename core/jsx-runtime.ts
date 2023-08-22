@@ -4,22 +4,10 @@ export const jsx = (tag: any, props: any) => {
     .map(([name, value], i) => `${i === 0 ? " " : ""}${name}="${value}"`)
     .join(` `);
 
-  const hotAttrs = Object.entries(props)
-    .filter(([name]) => name.startsWith("hot-"))
-    .reduce((acc, [name, value]) => {
-      acc.push([name.replace("hot-", ""), value]);
-      return acc;
-    }, [] as any);
-
-  const hotAttrsString =
-    hotAttrs.length > 0 ? ` hot-x='${JSON.stringify(hotAttrs)}'` : "";
-
   const children = Array.isArray(props.children)
     ? props.children.join("")
     : props.children;
-  return `<${tag}${attrs}${hotAttrsString}>${
-    children ? children : ""
-  }</${tag}>`;
+  return `<${tag}${attrs}>${children ? children : ""}</${tag}>`;
 };
 
 export const jsxDEV = jsx;

@@ -21,7 +21,7 @@ export function createServer({
   });
 
   // Start the ports router
-  const portRouter = new Bun.FileSystemRouter({
+  const portsRouter = new Bun.FileSystemRouter({
     style: "nextjs",
     dir: process.cwd() + "/app",
     assetPrefix: "/ports/",
@@ -72,7 +72,7 @@ export function createServer({
       if (partsMatch) return handleHtml(req, partsMatch.filePath);
 
       // check if it's a port
-      const portsMatch = portRouter.match(req);
+      const portsMatch = portsRouter.match(req);
       if (portsMatch) return handleHtml(req, portsMatch.filePath);
 
       // check if it's a public file
