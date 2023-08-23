@@ -1,3 +1,5 @@
+import Context from "./context";
+
 type ServerOptions = {
   hostname?: string;
   port?: number;
@@ -10,32 +12,31 @@ export function createServer({
   // Start the bun page router
   const pageRouter = new Bun.FileSystemRouter({
     style: "nextjs",
-    dir: process.cwd() + "/app/pages",
+    dir: process.cwd() + "/src/app/pages",
   });
 
   // Start the bun parts router
   const partsRouter = new Bun.FileSystemRouter({
     style: "nextjs",
-    dir: process.cwd() + "/app",
+    dir: process.cwd() + "/src/app",
     assetPrefix: "/parts/",
   });
 
   // Start the ports router
   const portsRouter = new Bun.FileSystemRouter({
     style: "nextjs",
-    dir: process.cwd() + "/app",
+    dir: process.cwd() + "/src/app",
     assetPrefix: "/ports/",
   });
 
   // Helpers
-  async function handleHtml(req: Request, filePath: string) {
+  async function handleDynamic(req: Request, filePath: string) {
     try {
       const file = await import(filePath);
-      const html = await file.default(req);
+      const ctx = new Context(req);
+      const html = await file.default({ ctx });
       return new Response(html, {
-        headers: {
-          "Content-Type": "text/html",
-        },
+        headers: ctx.headers,
       });
     } catch (err: any) {
       // something went wrong, we don't want to crash the server so serve a 500
@@ -65,15 +66,15 @@ export function createServer({
     async fetch(req) {
       // check if it's a page
       const pageMatch = pageRouter.match(req);
-      if (pageMatch) return handleHtml(req, pageMatch.filePath);
+      if (pageMatch) return handleDynamic(req, pageMatch.filePath);
 
       // check if it's a component
       const partsMatch = partsRouter.match(req);
-      if (partsMatch) return handleHtml(req, partsMatch.filePath);
+      if (partsMatch) return handleDynamic(req, partsMatch.filePath);
 
       // check if it's a port
       const portsMatch = portsRouter.match(req);
-      if (portsMatch) return handleHtml(req, portsMatch.filePath);
+      if (portsMatch) return handleDynamic(req, portsMatch.filePath);
 
       // check if it's a public file
       const url = new URL(req.url);

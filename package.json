@@ -1,7 +1,5 @@
 {
   "name": "hotx",
-  "module": "main.ts",
-  "type": "module",
   "devDependencies": {
     "bun-types": "latest"
   },

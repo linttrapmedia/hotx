@@ -10,7 +10,7 @@
     "downlevelIteration": true,
     "skipLibCheck": true,
     "jsx": "react-jsx",
-    "jsxImportSource": "@core",
+    "jsxImportSource": "@impl/server/jsx",
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
@@ -19,7 +19,8 @@
       "bun-types" // add Bun global
     ],
     "paths": {
-      "@core/*": ["./core/*"]
+      "@impl/*": ["./src/impl/*"],
+      "@app/*": ["./src/app/*"]
     }
   }
 }

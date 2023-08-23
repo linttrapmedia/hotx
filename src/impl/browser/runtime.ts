@@ -15,7 +15,7 @@ function register(scope: HTMLElement | Document) {
   for (const element of elements.values()) {
     const traits = element.getAttribute("hot-x") ?? "[]";
     for (const trait of JSON.parse(traits).values()) {
-      const [name, ...args] = trait;
+      const [name, ...args] = trait as HotTrait;
       if (traitMap[name]) traitMap[name](element, ...args);
       element.setAttribute("hot-x-ready", traits); // keep copy around for debugging
       element.removeAttribute("hot-x"); // remove attribute to prevent re-registering
