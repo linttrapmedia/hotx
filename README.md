@@ -3,7 +3,7 @@ hotx (Pronounced "Hot Cross") is a Bun-first project starter kit for writing ful
 
 ## Try it
 ```bash
-bun run app/index.ts
+bun run src/app/serve.ts
 ```
 
 ## Why

@@ -15,20 +15,6 @@ export function createServer({
     dir: process.cwd() + "/src/app/pages",
   });
 
-  // Start the bun parts router
-  const partsRouter = new Bun.FileSystemRouter({
-    style: "nextjs",
-    dir: process.cwd() + "/src/app",
-    assetPrefix: "/parts/",
-  });
-
-  // Start the ports router
-  const portsRouter = new Bun.FileSystemRouter({
-    style: "nextjs",
-    dir: process.cwd() + "/src/app",
-    assetPrefix: "/ports/",
-  });
-
   // Helpers
   async function handleDynamic(req: Request, filePath: string) {
     try {
@@ -46,7 +32,7 @@ export function createServer({
 
   async function handleStatic(filePath: string) {
     try {
-      const blob = Bun.file("./src" + filePath);
+      const blob = Bun.file("./src/app" + filePath);
       const blobText = await blob.text();
       return new Response(blobText, {
         headers: {
@@ -68,23 +54,15 @@ export function createServer({
       const pageMatch = pageRouter.match(req);
       if (pageMatch) return handleDynamic(req, pageMatch.filePath);
 
-      // check if it's a component
-      const partsMatch = partsRouter.match(req);
-      if (partsMatch) return handleDynamic(req, partsMatch.filePath);
-
-      // check if it's a port
-      const portsMatch = portsRouter.match(req);
-      if (portsMatch) return handleDynamic(req, portsMatch.filePath);
-
       // check if it's a public file
       const url = new URL(req.url);
       const pathname = url.pathname;
-      const publicMatch = pathname.startsWith("/public/");
+      const publicMatch = pathname.startsWith("/static/");
       if (!publicMatch) return new Response("403", { status: 403 });
 
       // check if the file type is allowed
       const ext = pathname.split(".").pop() ?? "";
-      const allowed = [".js", ".css"].includes(ext);
+      const allowed = ["js", "css"].includes(ext);
       if (!allowed) return new Response("403", { status: 403 });
 
       // must be a static public file

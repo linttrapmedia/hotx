@@ -1,14 +1,15 @@
-type HotTrait =
-  | ["trigger", string]
-  | ["request", string]
-  | ["append", string]
-  | ["prepend", string]
-  | ["replace", string]
-  | ["clear", string]
-  | ["select", string, string];
+type TodoAddTodo = { event: "AddTodo"; payload: "#todoForm" };
+type TodoRemoveTodo = { event: "RemoveTodo"; payload: "#todoForm" };
+type TodoMachine = TodoAddTodo | TodoRemoveTodo;
+
+type HotTrait<Machine extends { event: string; payload: any }> = {
+  trigger?: "click" | "hover" | "focus" | "none";
+  send?: Machine["event"];
+  payload?: Machine["payload"];
+};
 
 type HotAttr = {
-  "hot-x"?: HotTrait[];
+  "hot-x"?: HotTrait;
   [key: string]: any;
 };
 
