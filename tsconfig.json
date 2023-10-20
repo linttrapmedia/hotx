@@ -19,8 +19,8 @@
       "bun-types" // add Bun global
     ],
     "paths": {
-      "@impl/*": ["./src/impl/*"],
-      "@app/*": ["./src/app/*"]
+      "@impl/*": ["./impl/*"],
+      "@app/*": ["./app/*"]
     }
   }
 }

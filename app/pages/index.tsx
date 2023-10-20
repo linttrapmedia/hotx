@@ -1,21 +1,18 @@
 export default async function Home() {
-  const addToDoAttr: HotTrait<TodoMachine> = {
-    trigger: "click",
-    send: "AddTodo",
-    payload: "#todoForm",
-  };
-
   return (
     <html>
       <head>
         <link rel="stylesheet" href="/static/styles.css" />
-        <script src="/static/hotx.js"></script>
+        <script src="/static/runtime.js"></script>
+        <script src="/static/HotButton.js"></script>
       </head>
       <body>
-        <h1>About page</h1>
+        <h1>TODO</h1>
         <form id="todoForm">
           <input type="text" name="todo" />
-          <button hot-x={addToDoAttr}>Add</button>
+          <hot-button post="/api/todos" select="#todoForm">
+            Add
+          </hot-button>
         </form>
       </body>
     </html>

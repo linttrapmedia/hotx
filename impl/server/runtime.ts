@@ -5,18 +5,46 @@ type ServerOptions = {
   port?: number;
 };
 
-export function createServer({
+export async function createServer({
   hostname = "127.0.0.1",
   port = 3030,
 }: ServerOptions) {
+  // Compile browser code
+  await Bun.build({
+    entrypoints: ["./impl/browser/runtime.ts", "./impl/browser/HotButton.ts"],
+    outdir: "./app/static",
+  });
+
   // Start the bun page router
   const pageRouter = new Bun.FileSystemRouter({
     style: "nextjs",
-    dir: process.cwd() + "/src/app/pages",
+    dir: process.cwd() + "/app/pages",
   });
 
-  // Helpers
-  async function handleDynamic(req: Request, filePath: string) {
+  const apiRouter = new Bun.FileSystemRouter({
+    style: "nextjs",
+    assetPrefix: "/api",
+    dir: process.cwd() + "/app",
+  });
+
+  const staticRouter = new Bun.FileSystemRouter({
+    style: "nextjs",
+    assetPrefix: "/static",
+    dir: process.cwd() + "/app",
+  });
+
+  async function handleApi(req: Request, filePath: string) {
+    try {
+      const file = await import(filePath);
+      const result = await file.default(req);
+      return result;
+    } catch (err: any) {
+      // something went wrong, we don't want to crash the server so serve a 500
+      return new Response("500", { status: 500 });
+    }
+  }
+
+  async function handlePage(req: Request, filePath: string) {
     try {
       const file = await import(filePath);
       const ctx = new Context(req);
@@ -32,7 +60,7 @@ export function createServer({
 
   async function handleStatic(filePath: string) {
     try {
-      const blob = Bun.file("./src/app" + filePath);
+      const blob = Bun.file("./app/" + filePath);
       const blobText = await blob.text();
       return new Response(blobText, {
         headers: {
@@ -52,7 +80,14 @@ export function createServer({
     async fetch(req) {
       // check if it's a page
       const pageMatch = pageRouter.match(req);
-      if (pageMatch) return handleDynamic(req, pageMatch.filePath);
+      if (pageMatch) return handlePage(req, pageMatch.filePath);
+
+      // check if it's an api request
+      const apiMatch = apiRouter.match(req);
+      if (apiMatch) return handleApi(req, apiMatch.filePath);
+
+      const staticMatch = staticRouter.match(req);
+      if (staticMatch) return handleStatic(staticMatch.filePath);
 
       // check if it's a public file
       const url = new URL(req.url);

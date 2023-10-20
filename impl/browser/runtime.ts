@@ -1,6 +1,6 @@
 /// <reference lib="dom" />
 
-function register(scope) {
+function register(scope: Document | Element) {
   const elements = Array.from(scope.querySelectorAll("[hot-x]"));
   for (const element of elements.values()) {
     const hotx = element.getAttribute("hot-x") ?? "{}";
@@ -18,7 +18,7 @@ function register(scope) {
 document.addEventListener("DOMContentLoaded", function () {
   register(document);
   new MutationObserver(function (records) {
-    for (const r of records) register(r.target);
+    for (const r of records) register(r.target as Element);
   }).observe(document, {
     childList: true,
     subtree: true,
