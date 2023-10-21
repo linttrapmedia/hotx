@@ -9,11 +9,27 @@ export async function createServer({
   hostname = "127.0.0.1",
   port = 3030,
 }: ServerOptions) {
-  // Compile browser code
+  // Compile ts
   await Bun.build({
-    entrypoints: ["./impl/browser/runtime.ts", "./impl/browser/HotButton.ts"],
+    entrypoints: ["./impl/browser/runtime.ts"],
     outdir: "./app/static",
+    target: "browser",
+    naming: {
+      entry: "[name].js",
+      asset: "[name].js",
+    },
   });
+
+  // Compile css
+  // await Bun.build({
+  //   entrypoints: ["./impl/browser/HotButton.css"],
+  //   outdir: "./app/static",
+  //   target: "browser",
+  //   naming: {
+  //     asset: "[name].css",
+  //     entry: "[name].css",
+  //   },
+  // });
 
   // Start the bun page router
   const pageRouter = new Bun.FileSystemRouter({

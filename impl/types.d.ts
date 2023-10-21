@@ -1,21 +1,14 @@
-type HotButton =
-  | {
-      post: "/api/todos";
-      select: `#${string}`;
-    }
-  | {
-      put: "/api/todos";
-      select: `#${string}`;
-    }
-  | {
-      delete: "/api/todos";
-      id: string;
-    };
-
 namespace JSX {
   type Element = string | any;
+  type HtmlAttr = {
+    [key: string]: any;
+    "hot-data"?: string;
+    "hot-event"?: string;
+    "hot-form"?: string;
+    "hot-trigger"?: string;
+  };
   interface IntrinsicElements {
-    "hot-button": HotButton;
+    "hot-button": HotButtonProps;
     a: HtmlAttr;
     abbr: HtmlAttr;
     address: HtmlAttr;
