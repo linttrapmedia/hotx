@@ -54,13 +54,15 @@ function TodoPage({ list }: { list: string[] }) {
 To make the magic happen the server needs to return a json object with a `dom` key that looks like this:
 
 ```json
-dom: {
-  innerText: {
-    "#status": "Complete",
-  },
-  outerHTML: {
-    "#todo-list": "<div>some html content</div>",
-  },
+{
+  "dom": {
+    innerText: {
+      "#status": "Complete",
+    },
+    outerHTML: {
+      "#todo-list": "<div>some html content</div>",
+    },
+  }
 }
 ```
 
@@ -69,5 +71,23 @@ Each key in `dom` represents the dom manipulation you'd like to take place. Each
 ## Web Components
 By relying on the server's response to effect dom manipulation may seem limiting but the `hot-web-component` attribute coupled with `web-components` is a match made in heaven. Web Components can anything you can dream up and therefore there's not limit to what you can build.
 
-## Backend-For-Frontend Philosophy
+## State Management
 When you use a BE4FE approach so many things fall into place. For one, easy things remain easy which can't be said for a lot of framework ecosystems. The dev setup, testing, state management, dependency management and better overall DX. The missing link in most apps is sane state management without quirks that lead to endless bugs.  Xstate is best in class in this arena and next we'll be looking at how we can leverage it or an equivalent to drive the entire api. Imagine being able to prove out the exact state of the frontend from the backend! A user's entire session could be persisted or shared. It's the old school simplicity of what webdev used to be but without compromising the sophistication of modern dev (using web components) all while using standards.
+
+This can easily be facilitated by having the server return one more key `state`:
+
+```json
+{
+  "state": "RUNNING",
+  "dom": {
+    innerText: {
+      "#status": "Complete",
+    },
+    outerHTML: {
+      "#todo-list": "<div>some html content</div>",
+    },
+  }
+}
+```
+
+The `state` key will update the `hotx` (globally available) instance and send it back to the server on the next api request. An "event" can be sent along by merely adding it as a hidden field on the submitted form or adding it as a dataset attribute which means we now have all the makings of submitting both the current state and what action we'd like performed to the backend which can mutate the dom accordingly. 
