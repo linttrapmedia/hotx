@@ -56,10 +56,10 @@ To make the magic happen the server needs to return a json object with a `dom` k
 ```json
 {
   "dom": {
-    innerText: {
+    "innerText": {
       "#status": "Complete",
     },
-    outerHTML: {
+    "outerHTML": {
       "#todo-list": "<div>some html content</div>",
     },
   }
@@ -80,10 +80,10 @@ This can easily be facilitated by having the server return one more key `state`:
 {
   "state": "RUNNING",
   "dom": {
-    innerText: {
+    "innerText": {
       "#status": "Complete",
     },
-    outerHTML: {
+    "outerHTML": {
       "#todo-list": "<div>some html content</div>",
     },
   }
