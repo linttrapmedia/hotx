@@ -8,7 +8,7 @@ function addTodo(formData: FormData) {
     JSON.stringify({
       state: "INIT",
       dom: {
-        innerHTML: {
+        outerHTML: {
           "#todo-list": TodoList(),
         },
       },
@@ -25,7 +25,7 @@ function completeTodo(formData: FormData) {
     JSON.stringify({
       state: "INIT",
       dom: {
-        innerHTML: {
+        outerHTML: {
           "#todo-list": TodoList(),
         },
       },

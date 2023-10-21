@@ -1,4 +1,4 @@
-import { Hotx } from "./Hotx";
+import { Hotx } from "./hotx/runtime/Hotx";
 
 export {};
 declare global {

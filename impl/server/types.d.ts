@@ -2,13 +2,18 @@ namespace JSX {
   type Element = string | any;
   type HtmlAttr = {
     [key: string]: any;
+    style?: Partial<CSSStyleDeclaration> | string;
     "hot-data"?: string;
     "hot-event"?: string;
     "hot-form"?: string;
     "hot-trigger"?: string;
+    "hot-machine"?: string;
+    "hot-web-element"?: {
+      [selector: string]: { [key: string]: string | number | boolean };
+    };
   };
   interface IntrinsicElements {
-    "hot-button": HotButtonProps;
+    "hot-drawer": { open: "true" | "false" };
     a: HtmlAttr;
     abbr: HtmlAttr;
     address: HtmlAttr;

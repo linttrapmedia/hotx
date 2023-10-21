@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "sources": ["../../impl/browser/hotx/components/HotDrawer.ts"],
+  "sourcesContent": [
+    "class HotDrawer extends HTMLElement {\n  constructor() {\n    super();\n\n    this.attachShadow({ mode: \"open\" });\n    const template = document.createElement(\"template\");\n    template.innerHTML = `\n        <style>\n          :host([open=\"true\"]) { display: block; }\n          :host([open=\"false\"]) { display: none; }\n        </style>\n        <div>\n          <slot name=\"title\"></slot>\n          <slot name=\"body\"></slot>\n          <slot name=\"footer\"></slot>\n        </div>\n      `;\n    const clone = document.importNode(template.content, true);\n    this.shadowRoot!.appendChild(clone);\n  }\n\n  static get observedAttributes() {\n    return [\"open\"];\n  }\n\n  //   attributeChangedCallback(name: string, oldValue: string, newValue: string) {}\n}\n\ncustomElements.define(\"hot-drawer\", HotDrawer);\n"
+  ],
+  "mappings": "AAAA,MAAM,UAAkB,WAAY,CAClC,WAAW,EAAG,CACZ,MAAM,EAEN,KAAK,aAAa,CAAE,KAAM,MAAO,CAAC,EAClC,MAAM,EAAW,SAAS,cAAc,UAAU,EAClD,EAAS,UAAY;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,QAWrB,MAAM,EAAQ,SAAS,WAAW,EAAS,QAAS,EAAI,EACxD,KAAK,WAAY,YAAY,CAAK,YAGzB,mBAAkB,EAAG,CAC9B,MAAO,CAAC,MAAM,EAIlB,CAEA,eAAe,OAAO,aAAc,CAAS",
+  "debugId": "D2F5D9621FAEEC1964756e2164756e21",
+  "names": []
+}

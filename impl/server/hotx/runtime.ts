@@ -1,4 +1,4 @@
-import Context from "./context";
+import Context from "../context";
 
 type ServerOptions = {
   hostname?: string;
@@ -11,7 +11,10 @@ export async function createServer({
 }: ServerOptions) {
   // Compile ts
   await Bun.build({
-    entrypoints: ["./impl/browser/runtime.ts"],
+    entrypoints: [
+      "./impl/browser/hotx/runtime/runtime.ts",
+      "./impl/browser/hotx/components/HotDrawer.ts",
+    ],
     outdir: "./app/static",
     target: "browser",
     minify: true,
@@ -19,18 +22,7 @@ export async function createServer({
       entry: "[name].js",
       asset: "[name].js",
     },
-  });
-
-  // Compile css
-  await Bun.build({
-    entrypoints: ["./impl/browser/variables.css"],
-    outdir: "./app/static",
-    target: "browser",
-    minify: true,
-    naming: {
-      asset: "[name].css",
-      entry: "[name].css",
-    },
+    sourcemap: "external",
   });
 
   // Start the bun page router

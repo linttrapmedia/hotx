@@ -1,20 +1,17 @@
 /// <reference lib="dom" />
 
-type HotxStates = "INIT" | "READY" | "LOADING" | "ERROR";
-type HotxEvents = "AddTodo" | "RemoveTodo" | "ToggleTodo";
-
 export type HotxResponse = {
-  state: HotxStates;
+  state: any;
   data: FormData;
   dom: any;
 };
 
 export class Hotx {
-  _state: HotxStates;
+  _state: string;
   constructor() {
     this._state = "INIT";
   }
-  dispatch(machine: string, event: HotxEvents, data: FormData) {
+  dispatch(machine: string, event: string, data: FormData) {
     data.append("state", this.state);
     data.append("event", event);
     return fetch(machine ?? "/api", {
@@ -43,7 +40,7 @@ export class Hotx {
   get state() {
     return this._state;
   }
-  set state(newState: HotxStates) {
+  set state(newState: string) {
     this._state = newState;
   }
 }
