@@ -14,6 +14,7 @@ export async function createServer({
     entrypoints: ["./impl/browser/runtime.ts"],
     outdir: "./app/static",
     target: "browser",
+    minify: true,
     naming: {
       entry: "[name].js",
       asset: "[name].js",
@@ -21,15 +22,16 @@ export async function createServer({
   });
 
   // Compile css
-  // await Bun.build({
-  //   entrypoints: ["./impl/browser/HotButton.css"],
-  //   outdir: "./app/static",
-  //   target: "browser",
-  //   naming: {
-  //     asset: "[name].css",
-  //     entry: "[name].css",
-  //   },
-  // });
+  await Bun.build({
+    entrypoints: ["./impl/browser/variables.css"],
+    outdir: "./app/static",
+    target: "browser",
+    minify: true,
+    naming: {
+      asset: "[name].css",
+      entry: "[name].css",
+    },
+  });
 
   // Start the bun page router
   const pageRouter = new Bun.FileSystemRouter({

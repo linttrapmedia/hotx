@@ -1,12 +1,26 @@
+function parseAttr(key: string, value: any) {
+  if (key === "style" && typeof value === "object") {
+    const camelToKebab = (str: string) =>
+      str.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+
+    return Object.entries(value)
+      .map(([key, value]) => `${camelToKebab(key)}: ${value};`)
+      .join(" ");
+  }
+  return value;
+}
+
 export const jsx = (tag: any, props: any) => {
+  if (typeof tag === "function") {
+    return tag(props);
+  }
   const attrs = Object.entries(props)
     .filter(([name]) => name !== "children")
-    .map(([name, value], i) => {
+    .map(([key, val], i) => {
       let str = "";
       if (i === 0) str += " ";
-      const val =
-        typeof value === "string" ? `"${value}"` : `'${JSON.stringify(value)}'`;
-      str += `${name}=${val}`;
+
+      str += `${key}="${parseAttr(key, val)}"`;
       return str;
     })
     .join(` `);

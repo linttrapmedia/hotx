@@ -6,7 +6,7 @@ type HotxEvents = "AddTodo" | "RemoveTodo" | "ToggleTodo";
 export type HotxResponse = {
   state: HotxStates;
   data: FormData;
-  domUpdates: any;
+  dom: any;
 };
 
 export class Hotx {
@@ -14,10 +14,10 @@ export class Hotx {
   constructor() {
     this._state = "INIT";
   }
-  dispatch(event: HotxEvents, data: FormData) {
+  dispatch(machine: string, event: HotxEvents, data: FormData) {
     data.append("state", this.state);
     data.append("event", event);
-    return fetch("/api/state-machine", {
+    return fetch(machine ?? "/api", {
       method: "POST",
       body: data,
     })
@@ -25,9 +25,11 @@ export class Hotx {
         if (!response.ok) throw new Error(response.statusText);
         const json = (await response.json()) as HotxResponse;
         window.hotx.state = json.state;
-        Object.entries(json.domUpdates).forEach(([selector, html]) => {
-          const el: any = document.querySelector(selector);
-          if (el) el.innerHTML = html;
+        Object.entries(json.dom).forEach(([action, updates]) => {
+          Object.entries(updates as any).forEach(([selector, html]) => {
+            const el: any = document.querySelector(selector);
+            if (el) el[action] = html;
+          });
         });
         return json;
       })

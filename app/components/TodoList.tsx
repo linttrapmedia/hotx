@@ -1,26 +1,30 @@
+import { todoList } from "../../test/mocks";
+
 export type Todo = {
   label: string;
   completed: boolean;
 };
 
-type TodoListProps = {
-  todos: Todo[];
-};
-
-export const TodoList = ({ todos }: TodoListProps) => {
+export const TodoList = () => {
   return (
     <div id="todo-list">
       <h1>Todos</h1>
       <ul>
-        {todos.map((todo) => (
+        {todoList.map((todo) => (
           <li>
             <button
               type="button"
               hot-event="CompleteTodo"
               hot-data="this"
               data-todo={todo.label}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                textDecoration: todo.completed ? "line-through" : "none",
+              }}
             >
-              {todo.label} - {todo.completed}
+              {todo.label}
             </button>
           </li>
         ))}
