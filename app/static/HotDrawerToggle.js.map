@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "sources": ["../../impl/browser/hotx/web-components/HotDrawerToggle.ts"],
+  "sourcesContent": [
+    "class HotDrawerToggle extends HTMLElement {\n  constructor() {\n    super();\n    this.attachShadow({ mode: \"open\" });\n    const template = document.createElement(\"template\");\n    template.innerHTML = `<slot></slot>`;\n    const clone = document.importNode(template.content, true);\n    this.shadowRoot!.appendChild(clone);\n    this.addEventListener(\"click\", () => {\n      const selector = `hot-drawer[name=\"${this.getAttribute(\"drawer\")}\"]`;\n      const drawer = document.querySelector(selector);\n      const isOpen = drawer!.getAttribute(\"open\");\n      drawer!.setAttribute(\"open\", isOpen === \"true\" ? \"false\" : \"true\");\n    });\n  }\n}\n\ncustomElements.define(\"hot-drawer-toggle\", HotDrawerToggle);\n"
+  ],
+  "mappings": ";AAAA,MAAM,wBAAwB,YAAY;AAAA,EACxC,WAAW,GAAG;AACZ,UAAM;AACN,SAAK,aAAa,EAAE,MAAM,OAAO,CAAC;AAClC,UAAM,WAAW,SAAS,cAAc,UAAU;AAClD,aAAS,YAAY;AACrB,UAAM,QAAQ,SAAS,WAAW,SAAS,SAAS,IAAI;AACxD,SAAK,WAAY,YAAY,KAAK;AAClC,SAAK,iBAAiB,SAAS,MAAM;AACnC,YAAM,WAAW,oBAAoB,KAAK,aAAa,QAAQ;AAC/D,YAAM,SAAS,SAAS,cAAc,QAAQ;AAC9C,YAAM,SAAS,OAAQ,aAAa,MAAM;AAC1C,aAAQ,aAAa,QAAQ,WAAW,SAAS,UAAU,MAAM;AAAA,KAClE;AAAA;AAEL;AAEA,eAAe,OAAO,qBAAqB,eAAe;",
+  "debugId": "DEE64F1D3BFEB3B964756e2164756e21",
+  "names": []
+}

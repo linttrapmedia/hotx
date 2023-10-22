@@ -8,18 +8,19 @@ export default async function Home() {
         <link rel="stylesheet" href="/static/variables.css" />
         <script src="/static/runtime.js"></script>
         <script src="/static/HotDrawer.js"></script>
+        <script src="/static/HotDrawerToggle.js"></script>
       </head>
       <body>
         <TodoList />
         <TodoForm />
-        <hot-drawer open="false">
+        <hot-drawer name="settings-drawer" open="false" align="right">
           <div slot="title">Title</div>
           <div slot="body">Body</div>
           <div slot="footer">Footer</div>
         </hot-drawer>
-        <button hot-web-component={{ "hot-drawer": { open: "true" } }}>
-          Toggle Drawer
-        </button>
+        <hot-drawer-toggle drawer="settings-drawer">
+          <button>Toggle Drawer</button>
+        </hot-drawer-toggle>
       </body>
     </html>
   );

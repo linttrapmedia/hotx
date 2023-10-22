@@ -1,29 +1,45 @@
-import Context from "../context";
+import { WatchEventType, watch } from "fs";
 
 type ServerOptions = {
   hostname?: string;
   port?: number;
 };
 
-export async function createServer({
-  hostname = "127.0.0.1",
-  port = 3030,
-}: ServerOptions) {
-  // Compile ts
+async function buildBrowser(
+  _: WatchEventType,
+  filename?: string | Error | undefined
+) {
+  console.log(`Building: ${filename ?? "All Assets"}`);
+
   await Bun.build({
     entrypoints: [
       "./impl/browser/hotx/runtime/runtime.ts",
-      "./impl/browser/hotx/components/HotDrawer.ts",
+      "./impl/browser/hotx/web-components/HotDrawer.ts",
+      "./impl/browser/hotx/web-components/HotDrawerToggle.ts",
     ],
     outdir: "./app/static",
     target: "browser",
-    minify: true,
+    minify: !Boolean(process.env.WATCH_MODE),
     naming: {
       entry: "[name].js",
       asset: "[name].js",
     },
     sourcemap: "external",
   });
+}
+
+export async function createServer({
+  hostname = "127.0.0.1",
+  port = 3030,
+}: ServerOptions) {
+  // Build frontend assets on start
+  buildBrowser("change");
+
+  // Watch for changes in development mode
+  if (process.env.WATCH_MODE) {
+    const runtimePath = "./impl/browser";
+    watch(runtimePath, { recursive: true }, buildBrowser);
+  }
 
   // Start the bun page router
   const pageRouter = new Bun.FileSystemRouter({
@@ -47,7 +63,9 @@ export async function createServer({
     try {
       const file = await import(filePath);
       const result = await file.default(req);
-      return result;
+      return new Response(JSON.stringify(result), {
+        headers: { "Content-Type": "application/json" },
+      });
     } catch (err: any) {
       console.log(err);
       // something went wrong, we don't want to crash the server so serve a 500
@@ -58,10 +76,9 @@ export async function createServer({
   async function handlePage(req: Request, filePath: string) {
     try {
       const file = await import(filePath);
-      const ctx = new Context(req);
-      const html = await file.default({ ctx });
-      return new Response(html, {
-        headers: ctx.headers,
+      const result = await file.default();
+      return new Response(result, {
+        headers: { "Content-Type": "text/html" },
       });
     } catch (err: any) {
       // something went wrong, we don't want to crash the server so serve a 500

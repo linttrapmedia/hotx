@@ -56,11 +56,6 @@ function getHotTriggerAttr(element: Element) {
   return val ?? defaultVal;
 }
 
-function getHotWebComponent(element: Element) {
-  const val = element.getAttribute("hot-web-component");
-  return val ?? null;
-}
-
 function handleData(
   element: Element,
   hotData: string,
@@ -96,26 +91,10 @@ function handleForm(
     .then(() => formElement.reset());
 }
 
-function handleWebComponent(hotWebComponent: string) {
-  const webElements = hotWebComponent.split(";");
-  for (const element of webElements) {
-    const [selector, ...config] = element.split(":");
-    const webElement = document.querySelector(selector);
-    console.log(webElement);
-    if (!webElement) continue;
-    for (const entry of config) {
-      for (const keyVal of entry.split(",")) {
-        const [key, val] = keyVal.split("=");
-        webElement.setAttribute(key, val);
-      }
-    }
-  }
-}
-
 function registerHotxElements(scope: Document | Element) {
   const elements = Array.from(
     scope.querySelectorAll(
-      "[hot-post],[hot-get],[hot-patch],[hot-delete],[hot-put],[hot-form],[hot-data],[hot-trigger],[hot-web-component]"
+      "[hot-post],[hot-get],[hot-patch],[hot-delete],[hot-put],[hot-form],[hot-data],[hot-trigger]"
     )
   );
   for (const el of elements.values()) {
@@ -129,7 +108,6 @@ function registerHotxElements(scope: Document | Element) {
     const hotPost = getHotPostAttr(el);
     const hotPut = getHotPutAttr(el);
     const hotTrigger = getHotTriggerAttr(el);
-    const hotWebComponent = getHotWebComponent(el);
     el.setAttribute("hot-ready", "true");
     el.addEventListener(hotTrigger, function (e) {
       e.preventDefault();
@@ -151,9 +129,6 @@ function registerHotxElements(scope: Document | Element) {
         if (hotDelete) handleData(el, hotData, "DELETE", hotDelete, hotEvent);
         if (hotPut) handleData(el, hotData, "PUT", hotPut, hotEvent);
       }
-
-      // handle "web-el" submission
-      if (hotWebComponent) handleWebComponent(hotWebComponent);
     });
   }
 }

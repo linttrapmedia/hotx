@@ -10,8 +10,7 @@ bun run cmd/serve.ts
 - ✔ No dependencies
 - ✔ Uses familiar `jsx` syntax to write html
 - ✔ Uses `htmx` approach for managing the dom
-- ✔ Uses `web-components`
-- ✔ Uses `web-components`
+- ✔ Includes `web-components` library
 
 ## What Does `hotx` Look Like?:
 
@@ -43,7 +42,6 @@ function TodoPage({ list }: { list: string[] }) {
 "hot-put" // submit the form or data via put
 "hot-delete" // submit the form or data via delete
 "hot-patch" // submit the form or data via patch
-"hot-web-component" // set attributes on various web components
 ```
 
 ## Server implementation
@@ -66,7 +64,7 @@ To make the magic happen the server needs to return a json object with a `dom` k
 Each key in `dom` represents the dom manipulation you'd like to take place. Each manipulation's key is the selector of the dom element you'd like to update and it's the value the contents you'd like it to be updated with.
 
 ## Web Components
-By relying on the server's response to effect dom manipulation may seem limiting but the `hot-web-component` attribute coupled with `web-components` is a match made in heaven. Web Components can anything you can dream up and therefore there's not limit to what you can build.
+By relying on the server's response to effect dom manipulation may seem limiting but with `web-components` we have everything we could want in a modern sophisticated web app, albeit a standards compliant framework free solution.
 
 ## State Management
 When you use a BE4FE approach so many things fall into place. For one, easy things remain easy which can't be said for a lot of framework ecosystems. The dev setup, testing, state management, dependency management and better overall DX. The missing link in most apps is sane state management without quirks that lead to endless bugs.  Xstate is best in class in this arena and next we'll be looking at how we can leverage it or an equivalent to drive the entire api. Imagine being able to prove out the exact state of the frontend from the backend! A user's entire session could be persisted or shared. It's the old school simplicity of what webdev used to be but without compromising the sophistication of modern dev (using web components) all while using standards.

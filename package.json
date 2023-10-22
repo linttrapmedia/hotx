@@ -7,6 +7,6 @@
     "typescript": "^5.0.0"
   },
   "scripts": {
-    "dev": "bun --watch run cmd/app.ts"
+    "dev": "WATCH_MODE=1 bun --watch run cmd/app.ts"
   }
 }

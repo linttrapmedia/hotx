@@ -12,12 +12,14 @@ namespace JSX {
     "hot-post"?: string;
     "hot-put"?: string;
     "hot-trigger"?: string;
-    "hot-web-element"?: {
-      [selector: string]: { [key: string]: string | number | boolean };
-    };
   };
   interface IntrinsicElements {
-    "hot-drawer": { open: "true" | "false" };
+    "hot-drawer": {
+      open: "true" | "false";
+      name: string;
+      align: "left" | "right";
+    };
+    "hot-drawer-toggle": { drawer: string };
     a: HtmlAttr;
     abbr: HtmlAttr;
     address: HtmlAttr;

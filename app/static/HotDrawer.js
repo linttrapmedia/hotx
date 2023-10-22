@@ -1,23 +1,36 @@
-class b extends HTMLElement{constructor(){super();this.attachShadow({mode:"open"});const s=document.createElement("template");s.style.right=this.getAttribute("open")==="true"?"0":"-50vw",s.innerHTML=`
+// impl/browser/hotx/web-components/HotDrawer.ts
+class HotDrawer extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+    const template = document.createElement("template");
+    template.innerHTML = `
         <style>
-          :host([open="true"]) { display: block; }
-          :host([open="false"]) { display: none; }
           :host {
             background-color: var(--color-black);
+            display: block;
             position: fixed;
             top: 0;
-            right: -50vw;
             bottom: 0;
             height: 100vh;
             width: 50vw;
             transition: all 0.3s ease-in-out;
           }
+          :host([open="true"][align="right"]) { right:0; }
+          :host([open="false"][align="right"]) { right: -50vw; }
+          :host([open="true"][align="left"]) { left:0; }
+          :host([open="false"][align="left"]) { left: -50vw; }
         </style>
         <div>
           <slot name="title"></slot>
           <slot name="body"></slot>
           <slot name="footer"></slot>
         </div>
-      `;const C=document.importNode(s.content,!0);this.shadowRoot.appendChild(C)}static get observedAttributes(){return["open"]}attributeChangedCallback(s,C,c){if(s==="open"&&C!==c)this.updateStyles()}updateStyles(){this.style.right=this.getAttribute("open")==="true"?"0":"-50vw"}}customElements.define("hot-drawer",b);
+      `;
+    const clone = document.importNode(template.content, true);
+    this.shadowRoot.appendChild(clone);
+  }
+}
+customElements.define("hot-drawer", HotDrawer);
 
-//# debugId=3A9B30E3C62AF83864756e2164756e21
+//# debugId=6C6957562962E1B464756e2164756e21

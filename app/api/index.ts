@@ -4,16 +4,14 @@ import { todoList } from "../../test/mocks";
 function addTodo(formData: FormData | URLSearchParams) {
   const newTodo = formData.get("todo") as string;
   todoList.push({ label: newTodo, completed: false });
-  return new Response(
-    JSON.stringify({
-      state: "INIT",
-      dom: {
-        outerHTML: {
-          "#todo-list": TodoList(),
-        },
+  return {
+    state: "INIT",
+    dom: {
+      outerHTML: {
+        "#todo-list": TodoList(),
       },
-    })
-  );
+    },
+  };
 }
 
 function completeTodo(formData: FormData | URLSearchParams) {
@@ -21,16 +19,14 @@ function completeTodo(formData: FormData | URLSearchParams) {
   todoList.forEach(
     (t) => (t.completed = t.label === todo ? !t.completed : t.completed)
   );
-  return new Response(
-    JSON.stringify({
-      state: "INIT",
-      dom: {
-        outerHTML: {
-          "#todo-list": TodoList(),
-        },
+  return {
+    state: "INIT",
+    dom: {
+      outerHTML: {
+        "#todo-list": TodoList(),
       },
-    })
-  );
+    },
+  };
 }
 
 export default async function handler(req: Request) {
