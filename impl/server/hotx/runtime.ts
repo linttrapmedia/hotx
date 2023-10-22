@@ -49,6 +49,7 @@ export async function createServer({
       const result = await file.default(req);
       return result;
     } catch (err: any) {
+      console.log(err);
       // something went wrong, we don't want to crash the server so serve a 500
       return new Response("500", { status: 500 });
     }

@@ -6,6 +6,11 @@ function getHotDataAttr(element: Element) {
   return val ?? null;
 }
 
+function getHotDeleteAttr(element: Element) {
+  const val = element.getAttribute("hot-delete");
+  return val ?? null;
+}
+
 function getHotEventAttr(element: Element) {
   const val = element.getAttribute("hot-event");
   return val ?? "";
@@ -16,9 +21,24 @@ function getHotFormAttr(element: Element) {
   return val ?? null;
 }
 
-function getHotMachineAttr(element: Element) {
-  const val = element.getAttribute("hot-machine");
-  return val ?? "/api";
+function getHotPatchAttr(element: Element) {
+  const val = element.getAttribute("hot-patch");
+  return val ?? null;
+}
+
+function getHotPostAttr(element: Element) {
+  const val = element.getAttribute("hot-post");
+  return val ?? null;
+}
+
+function getHotPutAttr(element: Element) {
+  const val = element.getAttribute("hot-put");
+  return val ?? null;
+}
+
+function getHotGetAttr(element: Element) {
+  const val = element.getAttribute("hot-get");
+  return val ?? null;
 }
 
 function getHotTriggerAttr(element: Element) {
@@ -36,15 +56,16 @@ function getHotTriggerAttr(element: Element) {
   return val ?? defaultVal;
 }
 
-function getHotWebElementAttr(element: Element) {
-  const val = element.getAttribute("hot-web-element");
+function getHotWebComponent(element: Element) {
+  const val = element.getAttribute("hot-web-component");
   return val ?? null;
 }
 
-function handleDataSubmission(
+function handleData(
   element: Element,
   hotData: string,
-  hotMachine: string,
+  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
+  endpoint: string,
   hotEvent: string
 ) {
   const data =
@@ -55,13 +76,14 @@ function handleDataSubmission(
   Object.entries(data.dataset).forEach(([key, value]) =>
     formData.append(key, value as any)
   );
-  window.hotx.dispatch(hotMachine, hotEvent, formData);
+  window.hotx.dispatch(method, endpoint, hotEvent, formData);
 }
 
-function handleFormSubmission(
+function handleForm(
   element: Element,
   hotForm: string,
-  hotMachine: string,
+  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
+  endpoint: string,
   hotEvent: string
 ) {
   const formElement =
@@ -70,12 +92,12 @@ function handleFormSubmission(
       : (document.querySelector(hotForm) as HTMLFormElement);
   const formData = new FormData(formElement);
   window.hotx
-    .dispatch(hotMachine, hotEvent, formData)
+    .dispatch(method, endpoint, hotEvent, formData)
     .then(() => formElement.reset());
 }
 
-function handleWebElementSubmission(element: Element, hotWebElement: string) {
-  const webElements = hotWebElement.split(";");
+function handleWebComponent(hotWebComponent: string) {
+  const webElements = hotWebComponent.split(";");
   for (const element of webElements) {
     const [selector, ...config] = element.split(":");
     const webElement = document.querySelector(selector);
@@ -91,27 +113,47 @@ function handleWebElementSubmission(element: Element, hotWebElement: string) {
 }
 
 function registerHotxElements(scope: Document | Element) {
-  const elements = Array.from(scope.querySelectorAll("[hot-event]"));
-  for (const element of elements.values()) {
-    if (element.getAttribute("hot-ready") === "true") continue;
-    const hotMachine = getHotMachineAttr(element);
-    const hotEvent = getHotEventAttr(element);
-    const hotForm = getHotFormAttr(element);
-    const hotData = getHotDataAttr(element);
-    const hotTrigger = getHotTriggerAttr(element);
-    const hotWebElement = getHotWebElementAttr(element);
-    element.setAttribute("hot-ready", "true");
-    element.addEventListener(hotTrigger, function (e) {
+  const elements = Array.from(
+    scope.querySelectorAll(
+      "[hot-post],[hot-get],[hot-patch],[hot-delete],[hot-put],[hot-form],[hot-data],[hot-trigger],[hot-web-component]"
+    )
+  );
+  for (const el of elements.values()) {
+    if (el.getAttribute("hot-ready") === "true") continue;
+    const hotData = getHotDataAttr(el);
+    const hotDelete = getHotDeleteAttr(el);
+    const hotEvent = getHotEventAttr(el);
+    const hotForm = getHotFormAttr(el);
+    const hotGet = getHotGetAttr(el);
+    const hotPatch = getHotPatchAttr(el);
+    const hotPost = getHotPostAttr(el);
+    const hotPut = getHotPutAttr(el);
+    const hotTrigger = getHotTriggerAttr(el);
+    const hotWebComponent = getHotWebComponent(el);
+    el.setAttribute("hot-ready", "true");
+    el.addEventListener(hotTrigger, function (e) {
       e.preventDefault();
 
       // handle "form" submission
-      if (hotForm) handleFormSubmission(element, hotForm, hotMachine, hotEvent);
+      if (hotForm) {
+        if (hotPost) handleForm(el, hotForm, "POST", hotPost, hotEvent);
+        if (hotGet) handleForm(el, hotForm, "GET", hotGet, hotEvent);
+        if (hotPatch) handleForm(el, hotForm, "PATCH", hotPatch, hotEvent);
+        if (hotDelete) handleForm(el, hotForm, "DELETE", hotDelete, hotEvent);
+        if (hotPut) handleForm(el, hotForm, "PUT", hotPut, hotEvent);
+      }
 
       // handle "data" submission
-      if (hotData) handleDataSubmission(element, hotData, hotMachine, hotEvent);
+      if (hotData) {
+        if (hotPost) handleData(el, hotData, "POST", hotPost, hotEvent);
+        if (hotGet) handleData(el, hotData, "GET", hotGet, hotEvent);
+        if (hotPatch) handleData(el, hotData, "PATCH", hotPatch, hotEvent);
+        if (hotDelete) handleData(el, hotData, "DELETE", hotDelete, hotEvent);
+        if (hotPut) handleData(el, hotData, "PUT", hotPut, hotEvent);
+      }
 
-      // handle "web-element" submission
-      if (hotWebElement) handleWebElementSubmission(element, hotWebElement);
+      // handle "web-el" submission
+      if (hotWebComponent) handleWebComponent(hotWebComponent);
     });
   }
 }

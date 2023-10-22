@@ -4,10 +4,14 @@ namespace JSX {
     [key: string]: any;
     style?: Partial<CSSStyleDeclaration> | string;
     "hot-data"?: string;
+    "hot-delete"?: string;
     "hot-event"?: string;
     "hot-form"?: string;
+    "hot-get"?: string;
+    "hot-patch"?: string;
+    "hot-post"?: string;
+    "hot-put"?: string;
     "hot-trigger"?: string;
-    "hot-machine"?: string;
     "hot-web-element"?: {
       [selector: string]: { [key: string]: string | number | boolean };
     };

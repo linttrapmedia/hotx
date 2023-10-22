@@ -12,11 +12,14 @@ export default async function Home() {
       <body>
         <TodoList />
         <TodoForm />
-        <hot-drawer open="true">
+        <hot-drawer open="false">
           <div slot="title">Title</div>
           <div slot="body">Body</div>
           <div slot="footer">Footer</div>
         </hot-drawer>
+        <button hot-web-component={{ "hot-drawer": { open: "true" } }}>
+          Toggle Drawer
+        </button>
       </body>
     </html>
   );

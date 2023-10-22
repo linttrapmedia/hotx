@@ -9,7 +9,7 @@ function parseAttr(key: string, value: any) {
   }
 
   // handle web-component attribute
-  if (key === "hot-web-element" && typeof value === "object") {
+  if (key === "hot-web-component" && typeof value === "object") {
     const attributeify = (value: any) => {
       return Object.entries(value)
         .map(([key, value]) => `${key}=${value}`)

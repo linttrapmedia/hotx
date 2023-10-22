@@ -11,13 +11,21 @@ export class Hotx {
   constructor() {
     this._state = "INIT";
   }
-  dispatch(machine: string, event: string, data: FormData) {
+  dispatch(method: string, api: string, event: string, data: FormData) {
     data.append("state", this.state);
     data.append("event", event);
-    return fetch(machine ?? "/api", {
-      method: "POST",
-      body: data,
-    })
+
+    const config = (() => {
+      if (method !== "GET")
+        return { api, options: { method: method, body: data } };
+      const urlSearchParams = new URLSearchParams();
+      data.forEach((value, key) => urlSearchParams.append(key, value as any));
+      return { api: api + "?" + urlSearchParams.toString() };
+    })();
+
+    console.log(config);
+
+    return fetch(config.api, config.options)
       .then(async (response) => {
         if (!response.ok) throw new Error(response.statusText);
         const json = (await response.json()) as HotxResponse;

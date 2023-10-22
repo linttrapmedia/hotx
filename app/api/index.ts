@@ -1,7 +1,7 @@
 import { TodoList } from "@app/components/TodoList";
 import { todoList } from "../../test/mocks";
 
-function addTodo(formData: FormData) {
+function addTodo(formData: FormData | URLSearchParams) {
   const newTodo = formData.get("todo") as string;
   todoList.push({ label: newTodo, completed: false });
   return new Response(
@@ -16,7 +16,7 @@ function addTodo(formData: FormData) {
   );
 }
 
-function completeTodo(formData: FormData) {
+function completeTodo(formData: FormData | URLSearchParams) {
   const todo = formData.get("todo") as string;
   todoList.forEach(
     (t) => (t.completed = t.label === todo ? !t.completed : t.completed)
@@ -34,7 +34,10 @@ function completeTodo(formData: FormData) {
 }
 
 export default async function handler(req: Request) {
-  const formData = (await req.formData()) as FormData;
+  const formData =
+    req.method === "GET"
+      ? new URLSearchParams(req.url.split("?")[1])
+      : ((await req.formData()) as FormData);
   const state = formData.get("state");
   const event = formData.get("event");
   const data = formData.get("data");

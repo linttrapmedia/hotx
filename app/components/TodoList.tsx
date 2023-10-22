@@ -14,14 +14,10 @@ export const TodoList = () => {
           <li>
             <button
               type="button"
+              hot-get="/api"
               hot-event="CompleteTodo"
               hot-data="this"
               data-todo={todo.label}
-              hot-web-element={{
-                "hot-drawer": {
-                  open: todo.completed ? "false" : "true",
-                },
-              }}
               style={{
                 background: "none",
                 border: "none",

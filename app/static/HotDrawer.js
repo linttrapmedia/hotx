@@ -1,13 +1,23 @@
-class s extends HTMLElement{constructor(){super();this.attachShadow({mode:"open"});const d=document.createElement("template");d.innerHTML=`
+class b extends HTMLElement{constructor(){super();this.attachShadow({mode:"open"});const s=document.createElement("template");s.style.right=this.getAttribute("open")==="true"?"0":"-50vw",s.innerHTML=`
         <style>
           :host([open="true"]) { display: block; }
           :host([open="false"]) { display: none; }
+          :host {
+            background-color: var(--color-black);
+            position: fixed;
+            top: 0;
+            right: -50vw;
+            bottom: 0;
+            height: 100vh;
+            width: 50vw;
+            transition: all 0.3s ease-in-out;
+          }
         </style>
         <div>
           <slot name="title"></slot>
           <slot name="body"></slot>
           <slot name="footer"></slot>
         </div>
-      `;const c=document.importNode(d.content,!0);this.shadowRoot.appendChild(c)}static get observedAttributes(){return["open"]}}customElements.define("hot-drawer",s);
+      `;const C=document.importNode(s.content,!0);this.shadowRoot.appendChild(C)}static get observedAttributes(){return["open"]}attributeChangedCallback(s,C,c){if(s==="open"&&C!==c)this.updateStyles()}updateStyles(){this.style.right=this.getAttribute("open")==="true"?"0":"-50vw"}}customElements.define("hot-drawer",b);
 
-//# debugId=D2F5D9621FAEEC1964756e2164756e21
+//# debugId=3A9B30E3C62AF83864756e2164756e21

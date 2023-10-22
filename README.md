@@ -6,15 +6,12 @@ hotx (Pronounced "Hot Cross") is a Bun-first project starter kit for writing ful
 bun run cmd/serve.ts
 ```
 
-## Why
-Because Bun.js is a one-stop shop that's why.
-
-- ✔ Uses `jsx` syntax to generate html
-- ✔ Uses `web-components` and includes a component library
+## Features
 - ✔ No dependencies
-- ✔ Takes a Backend-for-frontend approach which is better all around
-- ✔ Declares client-side behavior from the backend (kind of like `htmx`)
-- ✔ Serve and transpile client-side code on demand when you need it
+- ✔ Uses familiar `jsx` syntax to write html
+- ✔ Uses `htmx` approach for managing the dom
+- ✔ Uses `web-components`
+- ✔ Uses `web-components`
 
 ## What Does `hotx` Look Like?:
 
