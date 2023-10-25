@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "sources": ["../../impl/browser/hotx/web-components/HotButton.ts"],
+  "sourcesContent": [
+    "class HotButton extends HTMLElement {\n  constructor() {\n    super();\n    this.attachShadow({ mode: \"open\" });\n    const template = document.createElement(\"template\");\n    template.innerHTML = `\n    <style>\n      :host button {\n        background-color: var(--color-black);\n        border: none;\n        color: var(--color-white);\n        cursor: pointer;\n        padding:10px 20px;\n      }\n      :host([disabled=\"true\"]) button {\n        background-color: var(--color-grey);\n        pointer-events: none;\n      }\n    </style>\n    <button><slot></slot></button>\n    `;\n    const clone = document.importNode(template.content, true);\n    this.shadowRoot!.appendChild(clone);\n  }\n  connectedCallback() {\n    // const processing = this.getAttribute(\"processing\");\n    // const disabled = this.getAttribute(\"disabled\");\n    // console.log(\"processing\", processing, this);\n    // console.log(\"disabled\", disabled);\n  }\n}\n\ncustomElements.define(\"hot-button\", HotButton);\n"
+  ],
+  "mappings": ";AAAA,MAAM,kBAAkB,YAAY;AAAA,EAClC,WAAW,GAAG;AACZ,UAAM;AACN,SAAK,aAAa,EAAE,MAAM,OAAO,CAAC;AAClC,UAAM,WAAW,SAAS,cAAc,UAAU;AAClD,aAAS,YAAY;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAgBrB,UAAM,QAAQ,SAAS,WAAW,SAAS,SAAS,IAAI;AACxD,SAAK,WAAY,YAAY,KAAK;AAAA;AAAA,EAEpC,iBAAiB,GAAG;AAAA;AAMtB;AAEA,eAAe,OAAO,cAAc,SAAS;",
+  "debugId": "55655BA322F749DB64756e2164756e21",
+  "names": []
+}

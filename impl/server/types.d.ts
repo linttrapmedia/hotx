@@ -3,6 +3,7 @@ namespace JSX {
   type HtmlAttr = {
     [key: string]: any;
     style?: Partial<CSSStyleDeclaration> | string;
+    "hot-id"?: string;
     "hot-data"?: string;
     "hot-delete"?: string;
     "hot-event"?: string;
@@ -12,6 +13,10 @@ namespace JSX {
     "hot-post"?: string;
     "hot-put"?: string;
     "hot-trigger"?: string;
+  } & {
+    [key in `hot:${string}`]?:
+      | [phase: "after" | "before" | "on", eventName: string, value: string][]
+      | string;
   };
   interface IntrinsicElements {
     "hot-drawer": {
@@ -20,6 +25,17 @@ namespace JSX {
       align: "left" | "right";
     };
     "hot-drawer-toggle": { drawer: string };
+    "hot-button": {
+      id?: string;
+      processing?: "true" | "false";
+      disabled?: "true" | "false";
+    };
+    "hot-attribute": {
+      event: string;
+      target: string;
+      value?: string;
+      attribute?: string;
+    };
     a: HtmlAttr;
     abbr: HtmlAttr;
     address: HtmlAttr;

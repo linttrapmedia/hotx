@@ -1,10 +1,13 @@
 // impl/browser/hotx/runtime/Hotx.ts
 class Hotx {
   _state;
+  _hotAttributes;
   constructor() {
     this._state = "INIT";
+    this._hotAttributes = {};
   }
   dispatch(method, api, event, data) {
+    this.pub(`before:${event}`);
     data.append("state", this.state);
     data.append("event", event);
     const config = (() => {
@@ -14,7 +17,6 @@ class Hotx {
       data.forEach((value, key) => urlSearchParams.append(key, value));
       return { api: api + "?" + urlSearchParams.toString() };
     })();
-    console.log(config);
     return fetch(config.api, config.options).then(async (response) => {
       if (!response.ok)
         throw new Error(response.statusText);
@@ -27,10 +29,27 @@ class Hotx {
             el[action] = html;
         });
       });
+      this.pub(`after:${event}`);
       return json;
     }).catch((error) => {
       console.error("There has been a problem with your fetch operation:", error);
     });
+  }
+  pub(event) {
+    if (!this._hotAttributes[`${event}`])
+      return;
+    this._hotAttributes[`${event}`].forEach(({ target, attribute, value }) => {
+      const el = document.querySelector(target);
+      if (!value)
+        return el.removeAttribute(attribute);
+      if (el)
+        return el.setAttribute(attribute, value);
+    });
+  }
+  subHotAttribute(event, target, attribute, value) {
+    if (!this._hotAttributes[event])
+      this._hotAttributes[event] = [];
+    this._hotAttributes[event].push({ target, attribute, value });
   }
   get state() {
     return this._state;
@@ -145,4 +164,4 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 
-//# debugId=325C081B145B794A64756e2164756e21
+//# debugId=D315DA1FBED5606C64756e2164756e21

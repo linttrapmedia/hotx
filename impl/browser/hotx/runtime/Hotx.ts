@@ -6,12 +6,21 @@ export type HotxResponse = {
   dom: any;
 };
 
+export type HotAttribute = {
+  target: string;
+  attribute: string;
+  value?: string | null;
+};
+
 export class Hotx {
   _state: string;
+  _hotAttributes: { [event: string]: HotAttribute[] };
   constructor() {
     this._state = "INIT";
+    this._hotAttributes = {};
   }
   dispatch(method: string, api: string, event: string, data: FormData) {
+    this.pub(`before:${event}`);
     data.append("state", this.state);
     data.append("event", event);
 
@@ -22,8 +31,6 @@ export class Hotx {
       data.forEach((value, key) => urlSearchParams.append(key, value as any));
       return { api: api + "?" + urlSearchParams.toString() };
     })();
-
-    console.log(config);
 
     return fetch(config.api, config.options)
       .then(async (response) => {
@@ -36,6 +43,7 @@ export class Hotx {
             if (el) el[action] = html;
           });
         });
+        this.pub(`after:${event}`);
         return json;
       })
       .catch((error) => {
@@ -44,6 +52,23 @@ export class Hotx {
           error
         );
       });
+  }
+  pub(event: string) {
+    if (!this._hotAttributes[`${event}`]) return;
+    this._hotAttributes[`${event}`].forEach(({ target, attribute, value }) => {
+      const el: any = document.querySelector(target);
+      if (!value) return el.removeAttribute(attribute);
+      if (el) return el.setAttribute(attribute, value);
+    });
+  }
+  subHotAttribute(
+    event: string,
+    target: string,
+    attribute: string,
+    value?: string | null
+  ) {
+    if (!this._hotAttributes[event]) this._hotAttributes[event] = [];
+    this._hotAttributes[event].push({ target, attribute, value });
   }
   get state() {
     return this._state;

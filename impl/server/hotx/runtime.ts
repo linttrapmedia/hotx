@@ -16,6 +16,8 @@ async function buildBrowser(
       "./impl/browser/hotx/runtime/runtime.ts",
       "./impl/browser/hotx/web-components/HotDrawer.ts",
       "./impl/browser/hotx/web-components/HotDrawerToggle.ts",
+      "./impl/browser/hotx/web-components/HotButton.ts",
+      "./impl/browser/hotx/web-components/HotAttribute.ts",
     ],
     outdir: "./app/static",
     target: "browser",

@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "sources": ["../../impl/browser/hotx/web-components/HotState.ts"],
+  "sourcesContent": [
+    "class HotState extends HTMLElement {\n  constructor() {\n    super();\n    this.attachShadow({ mode: \"open\" });\n    const template = document.createElement(\"template\");\n    template.innerHTML = `<slot></slot>`;\n    const clone = document.importNode(template.content, true);\n    this.shadowRoot!.appendChild(clone);\n    const beforeEvent = this.getAttribute(\"before-event\");\n    const afterEvent = this.getAttribute(\"after-event\");\n  }\n}\n\ncustomElements.define(\"hot-state\", HotState);\n"
+  ],
+  "mappings": ";AAAA,MAAM,iBAAiB,YAAY;AAAA,EACjC,WAAW,GAAG;AACZ,UAAM;AACN,SAAK,aAAa,EAAE,MAAM,OAAO,CAAC;AAClC,UAAM,WAAW,SAAS,cAAc,UAAU;AAClD,aAAS,YAAY;AACrB,UAAM,QAAQ,SAAS,WAAW,SAAS,SAAS,IAAI;AACxD,SAAK,WAAY,YAAY,KAAK;AAClC,UAAM,cAAc,KAAK,aAAa,cAAc;AACpD,UAAM,aAAa,KAAK,aAAa,aAAa;AAAA;AAEtD;AAEA,eAAe,OAAO,aAAa,QAAQ;",
+  "debugId": "020573156FDFF2D264756e2164756e21",
+  "names": []
+}
