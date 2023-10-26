@@ -1,3 +1,9 @@
+export type HotDrawerAttributes = {
+  open: "true" | "false";
+  name: string;
+  align: "left" | "right";
+};
+
 class HotDrawer extends HTMLElement {
   constructor() {
     super();

@@ -1,59 +1,51 @@
 /// <reference lib="dom" />
 import { Hotx } from "./Hotx";
 
-function getHotDataAttr(element: Element) {
-  const val = element.getAttribute("hot-data");
-  return val ?? null;
+const ATTRS = [
+  "hot-data",
+  "hot-delete",
+  "hot-form",
+  "hot-get",
+  "hot-id",
+  "hot-patch",
+  "hot-post",
+  "hot-put",
+  "hot-trigger",
+  "hot\\:click",
+  "hot\\:submit",
+];
+
+function getAttr(element: Element, attr: string, nullVal: any = null) {
+  const val = element.getAttribute(attr);
+  return val ?? nullVal;
 }
 
-function getHotDeleteAttr(element: Element) {
-  const val = element.getAttribute("hot-delete");
-  return val ?? null;
-}
-
-function getHotEventAttr(element: Element) {
-  const val = element.getAttribute("hot-event");
-  return val ?? "";
-}
-
-function getHotFormAttr(element: Element) {
-  const val = element.getAttribute("hot-form");
-  return val ?? null;
-}
-
-function getHotPatchAttr(element: Element) {
-  const val = element.getAttribute("hot-patch");
-  return val ?? null;
-}
-
-function getHotPostAttr(element: Element) {
-  const val = element.getAttribute("hot-post");
-  return val ?? null;
-}
-
-function getHotPutAttr(element: Element) {
-  const val = element.getAttribute("hot-put");
-  return val ?? null;
-}
-
-function getHotGetAttr(element: Element) {
-  const val = element.getAttribute("hot-get");
-  return val ?? null;
-}
-
-function getHotTriggerAttr(element: Element) {
-  const val = element.getAttribute("hot-trigger");
-  const defaultVal =
-    element.tagName === "INPUT"
-      ? "change"
-      : element.tagName === "SELECT"
-      ? "change"
-      : element.tagName === "TEXTAREA"
-      ? "change"
-      : element.tagName === "FORM"
-      ? "submit"
-      : "click";
-  return val ?? defaultVal;
+function handleClick(el: Element) {
+  el.addEventListener("click", function (e: any) {
+    const input = el.getAttribute("hot:click") ?? "";
+    const mutations = input
+      .split(";")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    mutations.forEach((mutation) => {
+      const regex = /^([^\[]+)\[(.+)\]$/;
+      const matches = mutation.match(regex);
+      if (!matches) return;
+      const selector = matches[1];
+      const attributes = matches[2];
+      if (selector && attributes) {
+        attributes
+          .slice(0, -1)
+          .split(",")
+          .map((a) => a.trim())
+          .forEach((attr) => {
+            const [key, value] = attr.split("=");
+            if (selector === "this") return el.setAttribute(key, value);
+            document.querySelector(selector)?.setAttribute(key, value);
+          });
+      }
+    });
+  });
 }
 
 function handleData(
@@ -74,6 +66,10 @@ function handleData(
   window.hotx.dispatch(method, endpoint, hotEvent, formData);
 }
 
+function handleId(id: string, el: Element) {
+  window.hotx.addElement(id, el);
+}
+
 function handleForm(
   element: Element,
   hotForm: string,
@@ -91,45 +87,93 @@ function handleForm(
     .then(() => formElement.reset());
 }
 
-function registerHotxElements(scope: Document | Element) {
-  const elements = Array.from(
-    scope.querySelectorAll(
-      "[hot-post],[hot-get],[hot-patch],[hot-delete],[hot-put],[hot-form],[hot-data],[hot-trigger]"
-    )
-  );
-  for (const el of elements.values()) {
-    if (el.getAttribute("hot-ready") === "true") continue;
-    const hotData = getHotDataAttr(el);
-    const hotDelete = getHotDeleteAttr(el);
-    const hotEvent = getHotEventAttr(el);
-    const hotForm = getHotFormAttr(el);
-    const hotGet = getHotGetAttr(el);
-    const hotPatch = getHotPatchAttr(el);
-    const hotPost = getHotPostAttr(el);
-    const hotPut = getHotPutAttr(el);
-    const hotTrigger = getHotTriggerAttr(el);
-    el.setAttribute("hot-ready", "true");
-    el.addEventListener(hotTrigger, function (e) {
-      e.preventDefault();
-
-      // handle "form" submission
-      if (hotForm) {
-        if (hotPost) handleForm(el, hotForm, "POST", hotPost, hotEvent);
-        if (hotGet) handleForm(el, hotForm, "GET", hotGet, hotEvent);
-        if (hotPatch) handleForm(el, hotForm, "PATCH", hotPatch, hotEvent);
-        if (hotDelete) handleForm(el, hotForm, "DELETE", hotDelete, hotEvent);
-        if (hotPut) handleForm(el, hotForm, "PUT", hotPut, hotEvent);
-      }
-
-      // handle "data" submission
-      if (hotData) {
-        if (hotPost) handleData(el, hotData, "POST", hotPost, hotEvent);
-        if (hotGet) handleData(el, hotData, "GET", hotGet, hotEvent);
-        if (hotPatch) handleData(el, hotData, "PATCH", hotPatch, hotEvent);
-        if (hotDelete) handleData(el, hotData, "DELETE", hotDelete, hotEvent);
-        if (hotPut) handleData(el, hotData, "PUT", hotPut, hotEvent);
+function handleSubmit(el: Element) {
+  el.addEventListener("submit", function (e: any) {
+    e.preventDefault();
+    const input = el.getAttribute("hot:submit") ?? "";
+    const mutations = input
+      .split(";")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    mutations.forEach((mutation) => {
+      const regex = /^([^\[]+)\[(.+)\]$/;
+      const matches = mutation.match(regex);
+      if (!matches) return;
+      const selector = matches[1];
+      const attributes = matches[2];
+      if (selector && attributes) {
+        attributes
+          .slice(0, -1)
+          .split(",")
+          .map((a) => a.trim())
+          .forEach((attr) => {
+            const [key, value] = attr.split("=");
+            if (selector === "this") return el.setAttribute(key, value);
+            document.querySelector(selector)?.setAttribute(key, value);
+          });
       }
     });
+  });
+}
+
+function handleTrigger(o: {
+  el: Element;
+  data: string;
+  delete: string;
+  event: string;
+  form: string;
+  get: string;
+  id: string;
+  patch: string;
+  post: string;
+  put: string;
+  trigger: string;
+}) {
+  o.el.addEventListener(o.trigger, function (e: any) {
+    // handle "form" submission
+    if (o.form) {
+      if (o.post) handleForm(o.el, o.form, "POST", o.post, o.event);
+      if (o.get) handleForm(o.el, o.form, "GET", o.get, o.event);
+      if (o.patch) handleForm(o.el, o.form, "PATCH", o.patch, o.event);
+      if (o.delete) handleForm(o.el, o.form, "DELETE", o.delete, o.event);
+      if (o.put) handleForm(o.el, o.form, "PUT", o.put, o.event);
+    }
+
+    // handle "data" submission
+    if (o.data) {
+      if (o.post) handleData(o.el, o.data, "POST", o.post, o.event);
+      if (o.get) handleData(o.el, o.data, "GET", o.get, o.event);
+      if (o.patch) handleData(o.el, o.data, "PATCH", o.patch, o.event);
+      if (o.delete) handleData(o.el, o.data, "DELETE", o.delete, o.event);
+      if (o.put) handleData(o.el, o.data, "PUT", o.put, o.event);
+    }
+  });
+}
+
+function registerElements(scope: Document | Element) {
+  const attrs = ATTRS.map((attr) => `*[${attr}]:not([hot-ready])`);
+  const elements = Array.from(scope.querySelectorAll(`${attrs.join(", ")}`));
+  for (const el of elements.values()) {
+    const attrs = {
+      el,
+      data: getAttr(el, "hot-data", null),
+      delete: getAttr(el, "hot-delete", null),
+      event: getAttr(el, "hot-event", null),
+      form: getAttr(el, "hot-form", null),
+      get: getAttr(el, "hot-get", null),
+      id: getAttr(el, "hot-id", null),
+      click: getAttr(el, "hot:click", null),
+      patch: getAttr(el, "hot-patch", null),
+      post: getAttr(el, "hot-post", null),
+      put: getAttr(el, "hot-put", null),
+      submit: getAttr(el, "hot:submit", null),
+      trigger: getAttr(el, "hot-trigger", null),
+    };
+    if (attrs.id) handleId(attrs.id, el);
+    if (attrs.trigger) handleTrigger(attrs);
+    if (attrs.click) handleClick(el);
+    if (attrs.submit) handleSubmit(el);
+    el.setAttribute("hot-ready", "true");
   }
 }
 
@@ -137,11 +181,11 @@ document.addEventListener("DOMContentLoaded", function () {
   (<any>window).hotx = new Hotx();
 
   // register hotx elements on page load
-  registerHotxElements(document);
+  registerElements(document);
 
   // register hotx elements on page mutation
   new MutationObserver(function (records) {
-    for (const r of records) registerHotxElements(r.target as Element);
+    for (const r of records) registerElements(r.target as Element);
   }).observe(document, {
     childList: true,
     subtree: true,

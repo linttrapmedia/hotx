@@ -9,30 +9,21 @@ export default async function Home() {
         <script src="/static/HotDrawer.js"></script>
         <script src="/static/HotDrawerToggle.js"></script>
         <script src="/static/HotButton.js"></script>
-        <script src="/static/HotAttribute.js"></script>
       </head>
       <body>
         <TodoList />
         <form
+          id="todo-form"
           hot-id="todo-form"
-          hot-get="/api"
+          hot-get="/api/todo"
           hot-event="AddTodo"
           hot-form="this"
-          hot-model="{ valid: false }"
+          hot-bind="asdf"
+          hot-trigger="submit"
+          hot:submit="[#submit-button,disabled,true]"
         >
           <input type="text" name="todo" autofocus />
-          {/* <hot-attribute
-            event="before:AddTodo"
-            target="#submit-button"
-            attribute="disabled"
-            value="true"
-          />
-          <hot-attribute
-            event="after:AddTodo"
-            target="#submit-button"
-            attribute="disabled"
-          /> */}
-          <button hot-bind:disabled="" id="submit-button" type="submit">
+          <button id="submit-button" type="submit">
             Add
           </button>
         </form>
@@ -41,7 +32,6 @@ export default async function Home() {
           <div slot="body">Body</div>
           <div slot="footer">Footer</div>
         </hot-drawer>
-
         <hot-drawer-toggle drawer="settings-drawer">
           <hot-button disabled="false">Toggle Drawer</hot-button>
         </hot-drawer-toggle>

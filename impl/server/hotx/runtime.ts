@@ -11,23 +11,26 @@ async function buildBrowser(
 ) {
   console.log(`Building: ${filename ?? "All Assets"}`);
 
-  await Bun.build({
-    entrypoints: [
-      "./impl/browser/hotx/runtime/runtime.ts",
-      "./impl/browser/hotx/web-components/HotDrawer.ts",
-      "./impl/browser/hotx/web-components/HotDrawerToggle.ts",
-      "./impl/browser/hotx/web-components/HotButton.ts",
-      "./impl/browser/hotx/web-components/HotAttribute.ts",
-    ],
-    outdir: "./app/static",
-    target: "browser",
-    minify: !Boolean(process.env.WATCH_MODE),
-    naming: {
-      entry: "[name].js",
-      asset: "[name].js",
-    },
-    sourcemap: "external",
-  });
+  try {
+    await Bun.build({
+      entrypoints: [
+        "./impl/browser/hotx/runtime/runtime.ts",
+        "./impl/browser/hotx/web-components/HotDrawer.ts",
+        "./impl/browser/hotx/web-components/HotDrawerToggle.ts",
+        "./impl/browser/hotx/web-components/HotButton.ts",
+      ],
+      outdir: "./app/static",
+      target: "browser",
+      minify: !Boolean(process.env.WATCH_MODE),
+      naming: {
+        entry: "[name].js",
+        asset: "[name].js",
+      },
+      sourcemap: "external",
+    });
+  } catch (err: any) {
+    console.log(err);
+  }
 }
 
 export async function createServer({

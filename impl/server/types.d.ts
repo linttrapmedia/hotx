@@ -1,41 +1,28 @@
+type HotAttrs =
+  | "hot-data"
+  | "hot-delete"
+  | "hot-form"
+  | "hot-get"
+  | "hot-id"
+  | "hot-patch"
+  | "hot-post"
+  | "hot-put"
+  | "hot-trigger"
+  | "hot:click"
+  | "hot:submit";
+
 namespace JSX {
   type Element = string | any;
   type HtmlAttr = {
     [key: string]: any;
     style?: Partial<CSSStyleDeclaration> | string;
-    "hot-id"?: string;
-    "hot-data"?: string;
-    "hot-delete"?: string;
-    "hot-event"?: string;
-    "hot-form"?: string;
-    "hot-get"?: string;
-    "hot-patch"?: string;
-    "hot-post"?: string;
-    "hot-put"?: string;
-    "hot-trigger"?: string;
   } & {
-    [key in `hot:${string}`]?:
-      | [phase: "after" | "before" | "on", eventName: string, value: string][]
-      | string;
+    [key in HotAttrs]?: string;
   };
   interface IntrinsicElements {
-    "hot-drawer": {
-      open: "true" | "false";
-      name: string;
-      align: "left" | "right";
-    };
-    "hot-drawer-toggle": { drawer: string };
-    "hot-button": {
-      id?: string;
-      processing?: "true" | "false";
-      disabled?: "true" | "false";
-    };
-    "hot-attribute": {
-      event: string;
-      target: string;
-      value?: string;
-      attribute?: string;
-    };
+    "hot-drawer": HotDrawerAttributes;
+    "hot-drawer-toggle": HotDrawerAttributes;
+    "hot-button": HotButtonAttributes;
     a: HtmlAttr;
     abbr: HtmlAttr;
     address: HtmlAttr;

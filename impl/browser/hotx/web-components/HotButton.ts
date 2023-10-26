@@ -1,3 +1,9 @@
+export type HotButtonAttributes = {
+  id?: string;
+  processing?: "true" | "false";
+  disabled?: "true" | "false";
+};
+
 class HotButton extends HTMLElement {
   constructor() {
     super();

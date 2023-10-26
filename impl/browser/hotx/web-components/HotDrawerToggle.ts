@@ -1,3 +1,5 @@
+export type HotDrawerAttributes = { drawer: string };
+
 class HotDrawerToggle extends HTMLElement {
   constructor() {
     super();

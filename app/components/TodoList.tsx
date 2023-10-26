@@ -14,9 +14,11 @@ export const TodoList = () => {
           <li>
             <button
               type="button"
-              hot-get="/api"
+              hot:click="[this,style,textDecoration,line-through],[this,style,color,red]"
+              hot-get="/api/todo"
               hot-event="CompleteTodo"
               hot-data="this"
+              hot-trigger="click"
               data-todo={todo.label}
               style={{
                 background: "none",

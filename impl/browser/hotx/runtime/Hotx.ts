@@ -6,21 +6,17 @@ export type HotxResponse = {
   dom: any;
 };
 
-export type HotAttribute = {
-  target: string;
-  attribute: string;
-  value?: string | null;
-};
-
 export class Hotx {
   _state: string;
-  _hotAttributes: { [event: string]: HotAttribute[] };
+  _elements: Record<string, Element>;
   constructor() {
     this._state = "INIT";
-    this._hotAttributes = {};
+    this._elements = {};
+  }
+  addElement(id: string, element: Element) {
+    this._elements[id] = element;
   }
   dispatch(method: string, api: string, event: string, data: FormData) {
-    this.pub(`before:${event}`);
     data.append("state", this.state);
     data.append("event", event);
 
@@ -37,13 +33,18 @@ export class Hotx {
         if (!response.ok) throw new Error(response.statusText);
         const json = (await response.json()) as HotxResponse;
         window.hotx.state = json.state;
-        Object.entries(json.dom).forEach(([action, updates]) => {
-          Object.entries(updates as any).forEach(([selector, html]) => {
+        json.dom.forEach(
+          ([selector, action, ...args]: [string, string, ...any]) => {
             const el: any = document.querySelector(selector);
-            if (el) el[action] = html;
-          });
-        });
-        this.pub(`after:${event}`);
+            if (!el) return;
+            if (action === "outerHTML") el.outerHTML = args[0];
+            if (action === "innerHTML") el.innerHTML = args[0];
+            if (action === "setAttribute")
+              args[1] === null
+                ? el.removeAttribute(args[0])
+                : el.setAttribute(args[0], args[1]);
+          }
+        );
         return json;
       })
       .catch((error) => {
@@ -53,22 +54,8 @@ export class Hotx {
         );
       });
   }
-  pub(event: string) {
-    if (!this._hotAttributes[`${event}`]) return;
-    this._hotAttributes[`${event}`].forEach(({ target, attribute, value }) => {
-      const el: any = document.querySelector(target);
-      if (!value) return el.removeAttribute(attribute);
-      if (el) return el.setAttribute(attribute, value);
-    });
-  }
-  subHotAttribute(
-    event: string,
-    target: string,
-    attribute: string,
-    value?: string | null
-  ) {
-    if (!this._hotAttributes[event]) this._hotAttributes[event] = [];
-    this._hotAttributes[event].push({ target, attribute, value });
+  get elements() {
+    return this._elements;
   }
   get state() {
     return this._state;

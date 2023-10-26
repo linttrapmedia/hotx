@@ -6,11 +6,10 @@ function addTodo(formData: FormData | URLSearchParams) {
   todoList.push({ label: newTodo, completed: false });
   return {
     state: "INIT",
-    dom: {
-      outerHTML: {
-        "#todo-list": TodoList(),
-      },
-    },
+    dom: [
+      ["#submit-button", "setAttribute", "disabled", null],
+      ["#todo-list", "outerHTML", TodoList()],
+    ],
   };
 }
 
@@ -21,11 +20,7 @@ function completeTodo(formData: FormData | URLSearchParams) {
   );
   return {
     state: "INIT",
-    dom: {
-      outerHTML: {
-        "#todo-list": TodoList(),
-      },
-    },
+    dom: [["#todo-list", "outerHTML", TodoList()]],
   };
 }
 

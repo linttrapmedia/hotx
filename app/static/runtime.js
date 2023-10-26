@@ -1,13 +1,15 @@
 // impl/browser/hotx/runtime/Hotx.ts
 class Hotx {
   _state;
-  _hotAttributes;
+  _elements;
   constructor() {
     this._state = "INIT";
-    this._hotAttributes = {};
+    this._elements = {};
+  }
+  addElement(id, element) {
+    this._elements[id] = element;
   }
   dispatch(method, api, event, data) {
-    this.pub(`before:${event}`);
     data.append("state", this.state);
     data.append("event", event);
     const config = (() => {
@@ -22,34 +24,24 @@ class Hotx {
         throw new Error(response.statusText);
       const json = await response.json();
       window.hotx.state = json.state;
-      Object.entries(json.dom).forEach(([action, updates]) => {
-        Object.entries(updates).forEach(([selector, html]) => {
-          const el = document.querySelector(selector);
-          if (el)
-            el[action] = html;
-        });
+      json.dom.forEach(([selector, action, ...args]) => {
+        const el = document.querySelector(selector);
+        if (!el)
+          return;
+        if (action === "outerHTML")
+          el.outerHTML = args[0];
+        if (action === "innerHTML")
+          el.innerHTML = args[0];
+        if (action === "setAttribute")
+          args[1] === null ? el.removeAttribute(args[0]) : el.setAttribute(args[0], args[1]);
       });
-      this.pub(`after:${event}`);
       return json;
     }).catch((error) => {
       console.error("There has been a problem with your fetch operation:", error);
     });
   }
-  pub(event) {
-    if (!this._hotAttributes[`${event}`])
-      return;
-    this._hotAttributes[`${event}`].forEach(({ target, attribute, value }) => {
-      const el = document.querySelector(target);
-      if (!value)
-        return el.removeAttribute(attribute);
-      if (el)
-        return el.setAttribute(attribute, value);
-    });
-  }
-  subHotAttribute(event, target, attribute, value) {
-    if (!this._hotAttributes[event])
-      this._hotAttributes[event] = [];
-    this._hotAttributes[event].push({ target, attribute, value });
+  get elements() {
+    return this._elements;
   }
   get state() {
     return this._state;
@@ -60,42 +52,31 @@ class Hotx {
 }
 
 // impl/browser/hotx/runtime/runtime.ts
-var getHotDataAttr = function(element) {
-  const val = element.getAttribute("hot-data");
-  return val ?? null;
+var getAttr = function(element, attr, nullVal = null) {
+  const val = element.getAttribute(attr);
+  return val ?? nullVal;
 };
-var getHotDeleteAttr = function(element) {
-  const val = element.getAttribute("hot-delete");
-  return val ?? null;
-};
-var getHotEventAttr = function(element) {
-  const val = element.getAttribute("hot-event");
-  return val ?? "";
-};
-var getHotFormAttr = function(element) {
-  const val = element.getAttribute("hot-form");
-  return val ?? null;
-};
-var getHotPatchAttr = function(element) {
-  const val = element.getAttribute("hot-patch");
-  return val ?? null;
-};
-var getHotPostAttr = function(element) {
-  const val = element.getAttribute("hot-post");
-  return val ?? null;
-};
-var getHotPutAttr = function(element) {
-  const val = element.getAttribute("hot-put");
-  return val ?? null;
-};
-var getHotGetAttr = function(element) {
-  const val = element.getAttribute("hot-get");
-  return val ?? null;
-};
-var getHotTriggerAttr = function(element) {
-  const val = element.getAttribute("hot-trigger");
-  const defaultVal = element.tagName === "INPUT" ? "change" : element.tagName === "SELECT" ? "change" : element.tagName === "TEXTAREA" ? "change" : element.tagName === "FORM" ? "submit" : "click";
-  return val ?? defaultVal;
+var handleClick = function(el) {
+  el.addEventListener("click", function(e) {
+    const input = el.getAttribute("hot:click") ?? "";
+    const mutations = input.split(";").map((s) => s.trim()).filter(Boolean);
+    mutations.forEach((mutation) => {
+      const regex = /^([^\[]+)\[(.+)\]$/;
+      const matches = mutation.match(regex);
+      if (!matches)
+        return;
+      const selector = matches[1];
+      const attributes = matches[2];
+      if (selector && attributes) {
+        attributes.slice(0, -1).split(",").map((a) => a.trim()).forEach((attr) => {
+          const [key, value] = attr.split("=");
+          if (selector === "this")
+            return el.setAttribute(key, value);
+          document.querySelector(selector)?.setAttribute(key, value);
+        });
+      }
+    });
+  });
 };
 var handleData = function(element, hotData, method, endpoint, hotEvent) {
   const data = hotData === "this" ? element : document.querySelector(hotData);
@@ -103,65 +84,118 @@ var handleData = function(element, hotData, method, endpoint, hotEvent) {
   Object.entries(data.dataset).forEach(([key, value]) => formData.append(key, value));
   window.hotx.dispatch(method, endpoint, hotEvent, formData);
 };
+var handleId = function(id, el) {
+  window.hotx.addElement(id, el);
+};
 var handleForm = function(element, hotForm, method, endpoint, hotEvent) {
   const formElement = hotForm === "this" ? element : document.querySelector(hotForm);
   const formData = new FormData(formElement);
   window.hotx.dispatch(method, endpoint, hotEvent, formData).then(() => formElement.reset());
 };
-var registerHotxElements = function(scope) {
-  const elements = Array.from(scope.querySelectorAll("[hot-post],[hot-get],[hot-patch],[hot-delete],[hot-put],[hot-form],[hot-data],[hot-trigger]"));
-  for (const el of elements.values()) {
-    if (el.getAttribute("hot-ready") === "true")
-      continue;
-    const hotData = getHotDataAttr(el);
-    const hotDelete = getHotDeleteAttr(el);
-    const hotEvent = getHotEventAttr(el);
-    const hotForm = getHotFormAttr(el);
-    const hotGet = getHotGetAttr(el);
-    const hotPatch = getHotPatchAttr(el);
-    const hotPost = getHotPostAttr(el);
-    const hotPut = getHotPutAttr(el);
-    const hotTrigger = getHotTriggerAttr(el);
-    el.setAttribute("hot-ready", "true");
-    el.addEventListener(hotTrigger, function(e) {
-      e.preventDefault();
-      if (hotForm) {
-        if (hotPost)
-          handleForm(el, hotForm, "POST", hotPost, hotEvent);
-        if (hotGet)
-          handleForm(el, hotForm, "GET", hotGet, hotEvent);
-        if (hotPatch)
-          handleForm(el, hotForm, "PATCH", hotPatch, hotEvent);
-        if (hotDelete)
-          handleForm(el, hotForm, "DELETE", hotDelete, hotEvent);
-        if (hotPut)
-          handleForm(el, hotForm, "PUT", hotPut, hotEvent);
-      }
-      if (hotData) {
-        if (hotPost)
-          handleData(el, hotData, "POST", hotPost, hotEvent);
-        if (hotGet)
-          handleData(el, hotData, "GET", hotGet, hotEvent);
-        if (hotPatch)
-          handleData(el, hotData, "PATCH", hotPatch, hotEvent);
-        if (hotDelete)
-          handleData(el, hotData, "DELETE", hotDelete, hotEvent);
-        if (hotPut)
-          handleData(el, hotData, "PUT", hotPut, hotEvent);
+var handleSubmit = function(el) {
+  el.addEventListener("submit", function(e) {
+    e.preventDefault();
+    const input = el.getAttribute("hot:submit") ?? "";
+    const mutations = input.split(";").map((s) => s.trim()).filter(Boolean);
+    mutations.forEach((mutation) => {
+      const regex = /^([^\[]+)\[(.+)\]$/;
+      const matches = mutation.match(regex);
+      if (!matches)
+        return;
+      const selector = matches[1];
+      const attributes = matches[2];
+      if (selector && attributes) {
+        attributes.slice(0, -1).split(",").map((a) => a.trim()).forEach((attr) => {
+          const [key, value] = attr.split("=");
+          if (selector === "this")
+            return el.setAttribute(key, value);
+          document.querySelector(selector)?.setAttribute(key, value);
+        });
       }
     });
+  });
+};
+var handleTrigger = function(o) {
+  o.el.addEventListener(o.trigger, function(e) {
+    if (o.form) {
+      if (o.post)
+        handleForm(o.el, o.form, "POST", o.post, o.event);
+      if (o.get)
+        handleForm(o.el, o.form, "GET", o.get, o.event);
+      if (o.patch)
+        handleForm(o.el, o.form, "PATCH", o.patch, o.event);
+      if (o.delete)
+        handleForm(o.el, o.form, "DELETE", o.delete, o.event);
+      if (o.put)
+        handleForm(o.el, o.form, "PUT", o.put, o.event);
+    }
+    if (o.data) {
+      if (o.post)
+        handleData(o.el, o.data, "POST", o.post, o.event);
+      if (o.get)
+        handleData(o.el, o.data, "GET", o.get, o.event);
+      if (o.patch)
+        handleData(o.el, o.data, "PATCH", o.patch, o.event);
+      if (o.delete)
+        handleData(o.el, o.data, "DELETE", o.delete, o.event);
+      if (o.put)
+        handleData(o.el, o.data, "PUT", o.put, o.event);
+    }
+  });
+};
+var registerElements = function(scope) {
+  const attrs = ATTRS.map((attr) => `*[${attr}]:not([hot-ready])`);
+  const elements = Array.from(scope.querySelectorAll(`${attrs.join(", ")}`));
+  for (const el of elements.values()) {
+    const attrs2 = {
+      el,
+      data: getAttr(el, "hot-data", null),
+      delete: getAttr(el, "hot-delete", null),
+      event: getAttr(el, "hot-event", null),
+      form: getAttr(el, "hot-form", null),
+      get: getAttr(el, "hot-get", null),
+      id: getAttr(el, "hot-id", null),
+      click: getAttr(el, "hot:click", null),
+      patch: getAttr(el, "hot-patch", null),
+      post: getAttr(el, "hot-post", null),
+      put: getAttr(el, "hot-put", null),
+      submit: getAttr(el, "hot:submit", null),
+      trigger: getAttr(el, "hot-trigger", null)
+    };
+    if (attrs2.id)
+      handleId(attrs2.id, el);
+    if (attrs2.trigger)
+      handleTrigger(attrs2);
+    if (attrs2.click)
+      handleClick(el);
+    if (attrs2.submit)
+      handleSubmit(el);
+    el.setAttribute("hot-ready", "true");
   }
 };
+var ATTRS = [
+  "hot-data",
+  "hot-delete",
+  "hot-form",
+  "hot-get",
+  "hot-id",
+  "hot-patch",
+  "hot-post",
+  "hot-put",
+  "hot-trigger",
+  "hot\\:click",
+  "hot\\:submit"
+];
 document.addEventListener("DOMContentLoaded", function() {
   window.hotx = new Hotx;
-  registerHotxElements(document);
+  registerElements(document);
   new MutationObserver(function(records) {
     for (const r of records)
-      registerHotxElements(r.target);
+      registerElements(r.target);
   }).observe(document, {
     childList: true,
     subtree: true
   });
 });
 
-//# debugId=D315DA1FBED5606C64756e2164756e21
+//# debugId=79C314CAA78D5FBD64756e2164756e21
