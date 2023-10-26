@@ -12,11 +12,10 @@ async function buildBrowser(
   console.log(`Building: ${filename ?? "All Assets"}`);
 
   try {
-    await Bun.build({
+    const tsBuild = await Bun.build({
       entrypoints: [
         "./impl/browser/hotx/runtime/runtime.ts",
         "./impl/browser/hotx/web-components/HotDrawer.ts",
-        "./impl/browser/hotx/web-components/HotDrawerToggle.ts",
         "./impl/browser/hotx/web-components/HotButton.ts",
       ],
       outdir: "./app/static",
@@ -28,6 +27,7 @@ async function buildBrowser(
       },
       sourcemap: "external",
     });
+    if (!tsBuild.success) console.error(tsBuild);
   } catch (err: any) {
     console.log(err);
   }

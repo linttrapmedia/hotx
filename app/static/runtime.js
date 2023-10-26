@@ -24,6 +24,8 @@ class Hotx {
         throw new Error(response.statusText);
       const json = await response.json();
       window.hotx.state = json.state;
+      if (!json.dom || json.dom.length === 0)
+        return json;
       json.dom.forEach(([selector, action, ...args]) => {
         const el = document.querySelector(selector);
         if (!el)
@@ -32,8 +34,12 @@ class Hotx {
           el.outerHTML = args[0];
         if (action === "innerHTML")
           el.innerHTML = args[0];
+        if (action === "toggleAttribute")
+          el.toggleAttribute(args[0]);
+        if (action === "removeAttribute")
+          el.removeAttribute(args[0]);
         if (action === "setAttribute")
-          args[1] === null ? el.removeAttribute(args[0]) : el.setAttribute(args[0], args[1]);
+          el.setAttribute(args[0], args[1] ?? "");
       });
       return json;
     }).catch((error) => {
@@ -57,24 +63,23 @@ var getAttr = function(element, attr, nullVal = null) {
   return val ?? nullVal;
 };
 var handleClick = function(el) {
+  const attr = el.getAttribute("hot:click") ?? "";
+  const mutations = attr.match(/(\[[^\]]+\])/g)?.map((s) => s.slice(1).slice(0, -1).split(",")) ?? [];
+  if (!mutations.length)
+    return;
   el.addEventListener("click", function(e) {
-    const input = el.getAttribute("hot:click") ?? "";
-    const mutations = input.split(";").map((s) => s.trim()).filter(Boolean);
+    e.preventDefault();
     mutations.forEach((mutation) => {
-      const regex = /^([^\[]+)\[(.+)\]$/;
-      const matches = mutation.match(regex);
-      if (!matches)
+      const [target, action, ...args] = mutation;
+      const tEl = target === "this" ? el : document.querySelector(target);
+      if (!tEl)
         return;
-      const selector = matches[1];
-      const attributes = matches[2];
-      if (selector && attributes) {
-        attributes.slice(0, -1).split(",").map((a) => a.trim()).forEach((attr) => {
-          const [key, value] = attr.split("=");
-          if (selector === "this")
-            return el.setAttribute(key, value);
-          document.querySelector(selector)?.setAttribute(key, value);
-        });
-      }
+      if (action === "toggleAttribute")
+        tEl.toggleAttribute(args[0]);
+      if (action === "setAttribute")
+        tEl.setAttribute(args[0], args[1] ?? "");
+      if (action === "removeAttribute")
+        tEl.removeAttribute(args[0]);
     });
   });
 };
@@ -93,25 +98,19 @@ var handleForm = function(element, hotForm, method, endpoint, hotEvent) {
   window.hotx.dispatch(method, endpoint, hotEvent, formData).then(() => formElement.reset());
 };
 var handleSubmit = function(el) {
+  const attr = el.getAttribute("hot:submit") ?? "";
+  const mutations = attr.match(/(\[[^\]]+\])/g)?.map((s) => s.slice(1).slice(0, -1).split(",")) ?? [];
+  if (!mutations.length)
+    return;
   el.addEventListener("submit", function(e) {
     e.preventDefault();
-    const input = el.getAttribute("hot:submit") ?? "";
-    const mutations = input.split(";").map((s) => s.trim()).filter(Boolean);
     mutations.forEach((mutation) => {
-      const regex = /^([^\[]+)\[(.+)\]$/;
-      const matches = mutation.match(regex);
-      if (!matches)
+      const [target, action, ...args] = mutation;
+      const targetEl = target === "this" ? el : document.querySelector(target);
+      if (!targetEl)
         return;
-      const selector = matches[1];
-      const attributes = matches[2];
-      if (selector && attributes) {
-        attributes.slice(0, -1).split(",").map((a) => a.trim()).forEach((attr) => {
-          const [key, value] = attr.split("=");
-          if (selector === "this")
-            return el.setAttribute(key, value);
-          document.querySelector(selector)?.setAttribute(key, value);
-        });
-      }
+      if (action === "setAttribute")
+        args[1] === null ? targetEl.removeAttribute(args[0]) : targetEl.setAttribute(args[0], args[1]);
     });
   });
 };
@@ -198,4 +197,4 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 
-//# debugId=79C314CAA78D5FBD64756e2164756e21
+//# debugId=72B6140A2F8B867264756e2164756e21

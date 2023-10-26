@@ -7,7 +7,9 @@ function addTodo(formData: FormData | URLSearchParams) {
   return {
     state: "INIT",
     dom: [
-      ["#submit-button", "setAttribute", "disabled", null],
+      ["#todo-input", "removeAttribute", "disabled"],
+      ["#submit-button", "removeAttribute", "disabled"],
+      ["hot-drawer", "removeAttribute", "open"],
       ["#todo-list", "outerHTML", TodoList()],
     ],
   };

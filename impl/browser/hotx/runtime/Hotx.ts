@@ -33,16 +33,17 @@ export class Hotx {
         if (!response.ok) throw new Error(response.statusText);
         const json = (await response.json()) as HotxResponse;
         window.hotx.state = json.state;
+        if (!json.dom || json.dom.length === 0) return json;
         json.dom.forEach(
           ([selector, action, ...args]: [string, string, ...any]) => {
             const el: any = document.querySelector(selector);
             if (!el) return;
             if (action === "outerHTML") el.outerHTML = args[0];
             if (action === "innerHTML") el.innerHTML = args[0];
+            if (action === "toggleAttribute") el.toggleAttribute(args[0]);
+            if (action === "removeAttribute") el.removeAttribute(args[0]);
             if (action === "setAttribute")
-              args[1] === null
-                ? el.removeAttribute(args[0])
-                : el.setAttribute(args[0], args[1]);
+              el.setAttribute(args[0], args[1] ?? "");
           }
         );
         return json;

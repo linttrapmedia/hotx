@@ -21,29 +21,21 @@ function getAttr(element: Element, attr: string, nullVal: any = null) {
 }
 
 function handleClick(el: Element) {
+  const attr = el.getAttribute("hot:click") ?? "";
+  const mutations =
+    attr
+      .match(/(\[[^\]]+\])/g)
+      ?.map((s) => s.slice(1).slice(0, -1).split(",")) ?? [];
+  if (!mutations.length) return;
   el.addEventListener("click", function (e: any) {
-    const input = el.getAttribute("hot:click") ?? "";
-    const mutations = input
-      .split(";")
-      .map((s) => s.trim())
-      .filter(Boolean);
+    e.preventDefault();
     mutations.forEach((mutation) => {
-      const regex = /^([^\[]+)\[(.+)\]$/;
-      const matches = mutation.match(regex);
-      if (!matches) return;
-      const selector = matches[1];
-      const attributes = matches[2];
-      if (selector && attributes) {
-        attributes
-          .slice(0, -1)
-          .split(",")
-          .map((a) => a.trim())
-          .forEach((attr) => {
-            const [key, value] = attr.split("=");
-            if (selector === "this") return el.setAttribute(key, value);
-            document.querySelector(selector)?.setAttribute(key, value);
-          });
-      }
+      const [target, action, ...args] = mutation;
+      const tEl = target === "this" ? el : document.querySelector(target);
+      if (!tEl) return;
+      if (action === "toggleAttribute") tEl.toggleAttribute(args[0]);
+      if (action === "setAttribute") tEl.setAttribute(args[0], args[1] ?? "");
+      if (action === "removeAttribute") tEl.removeAttribute(args[0]);
     });
   });
 }
@@ -88,30 +80,22 @@ function handleForm(
 }
 
 function handleSubmit(el: Element) {
+  const attr = el.getAttribute("hot:submit") ?? "";
+  const mutations =
+    attr
+      .match(/(\[[^\]]+\])/g)
+      ?.map((s) => s.slice(1).slice(0, -1).split(",")) ?? [];
+  if (!mutations.length) return;
   el.addEventListener("submit", function (e: any) {
     e.preventDefault();
-    const input = el.getAttribute("hot:submit") ?? "";
-    const mutations = input
-      .split(";")
-      .map((s) => s.trim())
-      .filter(Boolean);
     mutations.forEach((mutation) => {
-      const regex = /^([^\[]+)\[(.+)\]$/;
-      const matches = mutation.match(regex);
-      if (!matches) return;
-      const selector = matches[1];
-      const attributes = matches[2];
-      if (selector && attributes) {
-        attributes
-          .slice(0, -1)
-          .split(",")
-          .map((a) => a.trim())
-          .forEach((attr) => {
-            const [key, value] = attr.split("=");
-            if (selector === "this") return el.setAttribute(key, value);
-            document.querySelector(selector)?.setAttribute(key, value);
-          });
-      }
+      const [target, action, ...args] = mutation;
+      const targetEl = target === "this" ? el : document.querySelector(target);
+      if (!targetEl) return;
+      if (action === "setAttribute")
+        args[1] === null
+          ? targetEl.removeAttribute(args[0])
+          : targetEl.setAttribute(args[0], args[1]);
     });
   });
 }

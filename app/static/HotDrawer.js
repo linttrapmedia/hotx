@@ -16,10 +16,10 @@ class HotDrawer extends HTMLElement {
             width: 50vw;
             transition: all 0.3s ease-in-out;
           }
-          :host([open="true"][align="right"]) { right:0; }
-          :host([open="false"][align="right"]) { right: -50vw; }
-          :host([open="true"][align="left"]) { left:0; }
-          :host([open="false"][align="left"]) { left: -50vw; }
+          :host([open][align="right"]) { right:0; }
+          :host([align="right"]) { right: -50vw; }
+          :host([open][align="left"]) { left:0; }
+          :host([align="left"]) { left: -50vw; }
         </style>
         <div>
           <slot name="title"></slot>
@@ -33,4 +33,4 @@ class HotDrawer extends HTMLElement {
 }
 customElements.define("hot-drawer", HotDrawer);
 
-//# debugId=6C6957562962E1B464756e2164756e21
+//# debugId=F7D222BC4A9C7F6364756e2164756e21

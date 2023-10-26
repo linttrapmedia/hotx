@@ -21,10 +21,10 @@ class HotDrawer extends HTMLElement {
             width: 50vw;
             transition: all 0.3s ease-in-out;
           }
-          :host([open="true"][align="right"]) { right:0; }
-          :host([open="false"][align="right"]) { right: -50vw; }
-          :host([open="true"][align="left"]) { left:0; }
-          :host([open="false"][align="left"]) { left: -50vw; }
+          :host([open][align="right"]) { right:0; }
+          :host([align="right"]) { right: -50vw; }
+          :host([open][align="left"]) { left:0; }
+          :host([align="left"]) { left: -50vw; }
         </style>
         <div>
           <slot name="title"></slot>
